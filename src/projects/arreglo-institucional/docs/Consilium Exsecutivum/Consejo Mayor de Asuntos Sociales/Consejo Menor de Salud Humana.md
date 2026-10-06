@@ -1,0 +1,5 @@
+# Consejo Menor de Salud Humana
+
+Tags: Consejo Menor, Tecnociencia, Tecnosalud
+: 29
+Related Sistemas de Consejos de Gobierno: Saluderia (Saluderia%20504a8074a29a423d95808bf19bfb8a25.md), Hospital Mayor de Investigación y Tratamiento de Enfermedades Infantiles (Hospital%20Mayor%20de%20Investigacio%CC%81n%20y%20Tratamiento%20de%20%2057849dda36e744eea0bf6dd5ae8a82e1.md), Hospital Mayor de Investigación y Medicina Avanzada (Hospital%20Mayor%20de%20Investigacio%CC%81n%20y%20Medicina%20Avanza%203f2be4931bfa43a3a3da988ad169019f.md), Laboratorio Mayor de Proyectos Médicos Avanzados (Laboratorio%20Mayor%20de%20Proyectos%20Me%CC%81dicos%20Avanzados%20149956e8f40e80bdbcdbfcc2788fc177.md), Saludtecnería (Saludtecneri%CC%81a%2079f6cb292deb44b38f31b858a9d2aa79.md), Biosaluderia (Biosaluderia%2010a956e8f40e807c852ed134d742bbf4.md)

@@ -1,0 +1,3 @@
+# Ethics Lab
+
+: 10

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notas del arreglo institucional · Memorial Dominicanensis</title>
+<meta name="description" content="Visor de las notas del arreglo institucional: consejos, agencias y laboratorios de la República Dominicana como promesa.">
+<meta name="theme-color" content="#17181C">
+<link rel="icon" href="../../favicon.ico">
+<link rel="stylesheet" href="../../css/tipografia.css">
+<style>
+:root{
+  --paper:#ffffff; --paper-2:#f4f5f8; --paper-3:#edeef3;
+  --ink:#17181c; --ink-2:#45484f; --ink-3:#63666f; --ink-muted:#9d9fa9;
+  --steel:#3a5fb5; --peri-tint:#f2f5fd;
+  --lime:#c9e96e; --lime-deep:#4d7c0f; --lime-soft:#def2a2;
+  --line:#e7e8ee; --line-2:#f0f1f5; --line-strong:#d9dbe3;
+  --canvas:#e6e7ee; --navy:#17181c;
+  --radius:16px;
+  --sans:"et-book",Palatino,"Palatino Linotype","Palatino LT STD","Book Antiqua",Georgia,serif;
+  --mono:Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  --shadow-card:0 1px 2px rgba(23,24,28,.03),0 10px 26px -22px rgba(23,24,28,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:.875rem;line-height:1.5;color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.6rem}
+::selection{background:var(--lime-soft);color:var(--ink)}
+
+/* ── Topbar ── */
+.topbar{background:var(--paper);border-bottom:1px solid var(--line)}
+.topbar__in{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.brand__logo{width:32px;height:32px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.brand__text{display:flex;flex-direction:column;line-height:1.15}
+.brand__name{font-weight:700;font-size:.95rem;letter-spacing:-.01em}
+.brand__sub{font-family:var(--mono);font-size:.56rem;letter-spacing:.24em;color:var(--lime-deep);font-weight:600}
+.topnav{display:flex;align-items:center;gap:1.4rem}
+.topnav a{font-size:.8rem;color:var(--ink-2);text-decoration:none}
+.topnav a:hover{color:var(--ink)}
+
+/* ── Visor ── */
+.visor{display:grid;grid-template-columns:300px 1fr;gap:1.2rem;align-items:start;padding:2rem 0 3rem}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-card)}
+.side{padding:1rem;position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto}
+.side__search{width:100%;font-family:var(--sans);font-size:.8rem;color:var(--ink);background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:.55rem .7rem;margin-bottom:.4rem;outline:none}
+.side__search:focus{border-color:var(--steel)}
+.side__count{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--ink-muted);margin-bottom:.6rem}
+.tree details{margin:.1rem 0}
+.tree summary{font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--ink-2);font-weight:600;cursor:pointer;padding:.3rem .4rem;border-radius:8px;list-style:none}
+.tree summary::-webkit-details-marker{display:none}
+.tree summary::before{content:"› ";color:var(--ink-muted)}
+.tree details[open] > summary::before{content:"⌄ "}
+.tree summary:hover{background:var(--paper-2)}
+.tree summary .n{color:var(--ink-muted);font-weight:400}
+.tree .kids{padding-left:.9rem;border-left:1px solid var(--line-2);margin-left:.55rem}
+.tn{display:block;font-size:.76rem;color:var(--ink-3);text-decoration:none;padding:.24rem .4rem;border-radius:8px;line-height:1.4}
+.tn:hover{background:var(--paper-2);color:var(--ink)}
+.tn.is-active{background:var(--peri-tint);color:var(--ink);font-weight:600}
+
+/* ── Nota ── */
+.doc{padding:1.6rem 1.8rem;min-width:0}
+.crumb{font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;color:var(--ink-muted);margin-bottom:1rem}
+.meta{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1.1rem}
+.chip{font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;color:var(--ink-2);background:var(--paper-2);border:1px solid var(--line);border-radius:999px;padding:.2rem .65rem}
+.chip b{color:var(--ink-muted);font-weight:400;margin-right:.35rem}
+.prosa h1{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin:0 0 1rem}
+.prosa h2{font-size:1.12rem;font-weight:600;letter-spacing:-.015em;margin:1.8rem 0 .7rem;line-height:1.3}
+.prosa h3{font-size:.95rem;font-weight:600;margin:1.4rem 0 .5rem}
+.prosa p{font-size:.9rem;line-height:1.75;color:var(--ink-2);margin-bottom:.9rem;max-width:72ch}
+.prosa strong{color:var(--ink)}
+.prosa ul,.prosa ol{margin:0 0 .9rem 1.4rem;font-size:.9rem;line-height:1.7;color:var(--ink-2);max-width:72ch}
+.prosa li{margin-bottom:.25rem}
+.prosa li ul,.prosa li ol{margin:.25rem 0 .25rem 1.2rem}
+.prosa blockquote{background:var(--peri-tint);border-left:3px solid var(--steel);border-radius:0 12px 12px 0;padding:.9rem 1.1rem;margin-bottom:.9rem}
+.prosa blockquote p{margin-bottom:.4rem}
+.prosa blockquote p:last-child{margin-bottom:0}
+.prosa table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:1rem;font-size:.8rem}
+.prosa th{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:.6rem .8rem;background:var(--paper-2);border-bottom:1px solid var(--line)}
+.prosa td{color:var(--ink-3);padding:.6rem .8rem;border-bottom:1px solid var(--line-2);vertical-align:top}
+.prosa tr:last-child td{border-bottom:0}
+.prosa code{font-family:var(--mono);font-size:.78em;background:var(--paper-3);border-radius:6px;padding:.1rem .35rem}
+.prosa pre{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;overflow:auto;margin-bottom:1rem}
+.prosa pre code{background:none;padding:0;font-size:.75rem;line-height:1.6}
+.prosa hr{border:0;border-top:1px solid var(--line);margin:1.4rem 0}
+.prosa img{max-width:100%;border:1px solid var(--line);border-radius:12px;margin-bottom:1rem}
+.prosa a{color:var(--steel);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+.prosa a:hover{border-color:var(--steel)}
+.prosa a.nota-ausente{color:var(--ink-muted);border-bottom:1px dashed var(--line-strong);cursor:not-allowed}
+.back{margin-top:1.6rem;border-top:1px solid var(--line);padding-top:1rem}
+.back__label{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:.6rem}
+.back a{display:inline-block;font-size:.78rem;color:var(--ink-2);text-decoration:none;background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:.3rem .6rem;margin:0 .4rem .4rem 0}
+.back a:hover{color:var(--ink);border-color:var(--line-strong)}
+.vacio,.error{border:1px dashed var(--line-strong);border-radius:12px;background:var(--paper-2);padding:1.2rem 1.4rem;font-size:.85rem;color:var(--ink-3);line-height:1.7}
+.vacio strong,.error strong{color:var(--ink-2)}
+.bienvenida h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.8rem}
+.bienvenida p{font-size:.9rem;line-height:1.75;color:var(--ink-2);margin-bottom:.8rem;max-width:64ch}
+.bienvenida p strong{color:var(--ink)}
+.bienvenida .stats{display:flex;gap:.6rem;flex-wrap:wrap;margin:1.2rem 0}
+.stat{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:.7rem 1rem}
+.stat b{display:block;font-size:1.15rem;font-weight:700}
+.stat span{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+
+/* ── Footer ── */
+footer{border-top:1px solid var(--line);background:var(--paper)}
+.foot__in{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.2rem 0;flex-wrap:wrap}
+.foot__links{display:flex;gap:1.3rem}
+.foot__links a{font-size:.78rem;color:var(--ink-2);text-decoration:none}
+.foot__links a:hover{color:var(--ink)}
+.foot__brand{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--ink-muted);text-decoration:none}
+
+@media (max-width:920px){
+  .visor{grid-template-columns:1fr}
+  .side{position:static;max-height:44vh}
+  .doc{padding:1.2rem 1.2rem}
+}
+@media (max-width:640px){
+  .topnav a:not(.is-cta){display:none}
+}
+
+/* Escala tipográfica (Tufte) para la prosa de las notas */
+.prosa h1{font-weight:400}
+.prosa h2,.prosa h3{font-style:italic;font-weight:400}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__in">
+    <a class="brand" href="index.html">
+      <img class="brand__logo" src="../../img/logo.webp" alt="">
+      <div class="brand__text">
+        <span class="brand__name">Arreglo Institucional</span>
+        <span class="brand__sub">REPÚBLICA DOMINICANA</span>
+      </div>
+    </a>
+    <nav class="topnav">
+      <a href="../../index.html">← Memorial</a>
+      <a href="index.html">Índice</a>
+      <a class="is-cta" href="organigrama.html">Treemap</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="visor">
+    <aside class="panel side">
+      <input class="side__search" id="q" type="search" placeholder="Buscar notas…" autocomplete="off">
+      <div class="side__count" id="count"></div>
+      <nav class="tree" id="tree" aria-label="Índice de notas"></nav>
+    </aside>
+    <main class="panel doc" id="doc" aria-live="polite"></main>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot__in">
+    <a class="foot__brand" href="index.html">ARREGLO INSTITUCIONAL · MEMORIAL</a>
+    <div class="foot__links">
+      <a href="index.html">Índice</a>
+      <a href="organigrama.html">Treemap</a>
+      <a href="../../index.html">Memorial</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+"use strict";
+var DOCS = "docs/";
+var M = null, byPath = {}, backlinks = {};
+
+/* ── utilidades ── */
+function esc(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+/* extrae links [t](u) / ![t](u) con paréntesis balanceados; fn(kind,label,url)->html */
+function extractLinks(s, fn){
+  var out = "", i = 0, n = s.length;
+  while(i < n){
+    var b = s.indexOf("[", i);
+    if(b < 0){ out += s.slice(i); break; }
+    var img = b > 0 && s[b-1] === "!";
+    var start = img ? b - 1 : b;
+    var j = b + 1, depth = 1, label = null;
+    while(j < n){
+      if(s[j] === "\\"){ j += 2; continue; }
+      if(s[j] === "[") depth++;
+      else if(s[j] === "]"){ depth--; if(!depth) break; }
+      j++;
+    }
+    if(j >= n){ out += s.slice(i); break; }
+    label = s.slice(b + 1, j);
+    var k = j + 1;
+    while(k < n && (s[k] === " " || s[k] === "\t")) k++;
+    if(k >= n || s[k] !== "("){ out += s.slice(i, j + 1); i = j + 1; continue; }
+    var d = 1, m = k + 1;
+    while(m < n && d){
+      if(s[m] === "(") d++;
+      else if(s[m] === ")") d--;
+      m++;
+    }
+    if(d){
+      // sin cierre balanceado (nombres Notion truncados): usar el último ')' de la línea
+      var eol = s.indexOf("\n", k); if(eol < 0) eol = n;
+      var close = eol > k ? s.lastIndexOf(")", eol - 1) : -1;
+      if(close > k){ m = close + 1; }
+      else { out += s.slice(i, k + 1); i = k + 1; continue; }
+    }
+    out += s.slice(i, start);
+    out += fn(img, label, s.slice(k + 1, m - 1).trim());
+    i = m;
+  }
+  return out;
+}
+function inline(s){
+  var codes = [];
+  s = s.replace(/`[^`\n]*`/g, function(m){ codes.push(m); return "\x00C" + (codes.length-1) + "\x00"; });
+  s = extractLinks(s, function(img, label, url){
+    if(img) return "\x00I" + IMG(url, label) + "\x00";
+    return "\x00L" + LINK(url, label) + "\x00";
+  });
+  s = esc(s);
+  s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/(^|[^\S*_])\*([^*\n]+)\*(?![\S*_])/g, "$1<em>$2</em>");
+  s = s.replace(/\x00L(\d+)\x00/g, function(m, i){ return LINKS[i]; });
+  s = s.replace(/\x00I(\d+)\x00/g, function(m, i){ return IMGS[i]; });
+  s = s.replace(/\x00C(\d+)\x00/g, function(m, i){ return codes[i] == null ? m : "<code>" + esc(codes[i].slice(1, -1)) + "</code>"; });
+  return s;
+}
+var LINKS = [], IMGS = [];
+function LINK(url, label){ LINKS.push('<a href="' + esc(url) + '">' + inline(label) + "</a>"); return LINKS.length - 1; }
+function IMG(url, alt){ IMGS.push('<img alt="' + esc(alt) + '" src="' + esc(url) + '">'); return IMGS.length - 1; }
+
+/* ── bloques ── */
+function isTableDelim(s){
+  var cells = s.replace(/^\||\|$/g, "").split("|");
+  return cells.length > 0 && cells.every(function(c){ return /^:?-+:?$/.test(c.trim()); });
+}
+function splitRow(s){
+  s = s.trim();
+  if(s[0] === "|") s = s.slice(1);
+  if(s[s.length-1] === "|") s = s.slice(0, -1);
+  return s.split("|").map(function(c){ return c.trim(); });
+}
+function blocks(lines){
+  var html = "", i = 0, n = lines.length;
+  function isList(l){ return /^\s*(?:[-*+‣]|\d+[.)])\s+\S/.test(l); }
+  while(i < n){
+    var line = lines[i];
+    if(!line.trim()){ i++; continue; }
+    if(/^```/.test(line)){
+      var code = [], j = i + 1;
+      while(j < n && !/^```/.test(lines[j])){ code.push(lines[j]); j++; }
+      html += "<pre><code>" + esc(code.join("\n")) + "</code></pre>";
+      i = j + 1; continue;
+    }
+    var h = line.match(/^(#{1,6})\s+(.*)$/);
+    if(h){ html += "<h" + h[1].length + ">" + inline(h[2]) + "</h" + h[1].length + ">"; i++; continue; }
+    if(/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)){ html += "<hr>"; i++; continue; }
+    if(line.indexOf("|") >= 0 && i + 1 < n && isTableDelim(lines[i+1])){
+      var head = splitRow(line), aligns = splitRow(lines[i+1]).map(function(c){
+        c = c.trim();
+        var l = c[0] === ":", r = c[c.length-1] === ":";
+        return l && r ? "center" : l ? "left" : r ? "right" : "left";
+      });
+      var t = "<table><thead><tr>" + head.map(function(c, k){
+        return '<th style="text-align:' + (aligns[k] || "left") + '">' + inline(c) + "</th>";
+      }).join("") + "</tr></thead><tbody>";
+      i += 2;
+      while(i < n && lines[i].indexOf("|") >= 0 && lines[i].trim()){
+        t += "<tr>" + splitRow(lines[i]).map(function(c, k){
+          return '<td style="text-align:' + (aligns[k] || "left") + '">' + inline(c) + "</td>";
+        }).join("") + "</tr>";
+        i++;
+      }
+      html += t + "</tbody></table>";
+      continue;
+    }
+    if(/^\s*>/.test(line)){
+      var q = [];
+      while(i < n && /^\s*>/.test(lines[i])){ q.push(lines[i].replace(/^\s*>\s?/, "")); i++; }
+      html += "<blockquote>" + blocks(q) + "</blockquote>";
+      continue;
+    }
+    if(isList(line)){
+      var items = [];
+      while(i < n && (isList(lines[i]) || (/^\s+\S/.test(lines[i]) && !/^\s*$/.test(lines[i])))){
+        items.push(lines[i]); i++;
+      }
+      html += parseList(items);
+      continue;
+    }
+    var par = [];
+    while(i < n && lines[i].trim() && !/^(#{1,6}\s|```|>|\s*(-{3,}))/ .test(lines[i]) && !isList(lines[i]) && !(lines[i].indexOf("|") >= 0 && i + 1 < n && isTableDelim(lines[i+1]))){
+      par.push(lines[i].trim()); i++;
+    }
+    html += "<p>" + inline(par.join(" ")) + "</p>";
+  }
+  return html;
+}
+function parseList(raw){
+  var items = raw.map(function(l){
+    var m = l.match(/^(\s*)([-*+‣]|\d+[.)])\s+(.*)$/);
+    if(!m) return {indent: 99, text: l.trim(), ordered: false};
+    return {indent: m[1].replace(/\t/g, "  ").length, ordered: /^\d/.test(m[2]), text: m[3]};
+  });
+  var pos = 0;
+  function level(minIndent){
+    var html = "", kind = null;
+    while(pos < items.length){
+      var it = items[pos];
+      if(it.indent === 99){ // continuación
+        html += " " + inline(it.text); pos++; continue;
+      }
+      if(it.indent < minIndent) break;
+      if(it.indent > minIndent){
+        html += level(it.indent);
+        continue;
+      }
+      var k = it.ordered ? "ol" : "ul";
+      if(kind && kind !== k){ html += "</" + kind + ">"; kind = null; }
+      if(!kind){ html += "<" + k + ">"; kind = k; }
+      pos++;
+      var inner = "";
+      if(pos < items.length && items[pos].indent > minIndent) inner = level(items[pos].indent);
+      html += "<li>" + inline(it.text) + inner + "</li>";
+    }
+    if(kind) html += "</" + kind + ">";
+    return html;
+  }
+  return level(0);
+}
+
+/* ── resolución de links ── */
+function norm(base, href){
+  var segs = (base + href).split("/");
+  var out = [];
+  for(var k = 0; k < segs.length; k++){
+    if(segs[k] === "" || segs[k] === ".") continue;
+    if(segs[k] === ".."){ out.pop(); continue; }
+    out.push(segs[k]);
+  }
+  return out.join("/");
+}
+function classify(href, baseDir){
+  if(!href) return {missing: true};
+  if(/^(https?:|mailto:)/i.test(href)) return {ext: true};
+  if(href[0] === "#") return {frag: true};
+  var nofrag = href.split("#")[0];
+  if(/\.(png|jpe?g|ico|svg|webp|gif|csv)(\?.*)?$/i.test(nofrag)) return {asset: nofrag};
+  var dec;
+  try{ dec = decodeURIComponent(nofrag); }catch(e){ dec = nofrag; }
+  if(dec.toLowerCase().slice(-3) !== ".md") return {ext: true};
+  var rel = norm(baseDir, dec);
+  if(byPath[rel]) return {to: rel};
+  return {missing: true, raw: href};
+}
+function postProcess(root, baseDir){
+  var as = root.querySelectorAll("a[href]");
+  for(var i = 0; i < as.length; i++){
+    var a = as[i], c = classify(a.getAttribute("href"), baseDir);
+    if(c.ext){ a.target = "_blank"; a.rel = "noopener"; }
+    else if(c.asset){
+      var dec;
+      try{ dec = decodeURIComponent(c.asset); }catch(e){ dec = c.asset; }
+      a.href = DOCS + norm(baseDir, dec);
+    }
+    else if(c.to){ a.href = "#/" + encodeURI(c.to); }
+    else if(!c.frag){ a.removeAttribute("href"); a.classList.add("nota-ausente"); a.title = "Nota ausente: " + (c.raw || ""); }
+  }
+  var imgs = root.querySelectorAll("img[src]");
+  for(var j = 0; j < imgs.length; j++){
+    var im = imgs[j], s = im.getAttribute("src");
+    if(!/^(https?:|data:)/i.test(s)){
+      var dec2;
+      try{ dec2 = decodeURIComponent(s); }catch(e){ dec2 = s; }
+      im.src = DOCS + norm(baseDir, dec2);
+    }
+  }
+}
+
+/* ── árbol ── */
+function buildTree(notes){
+  var root = {};
+  notes.forEach(function(n){
+    var segs = n.p.split("/");
+    var node = root;
+    for(var i = 0; i < segs.length - 1; i++) node = node[segs[i]] = node[segs[i]] || {};
+    (node[""] = node[""] || []).push(n);
+  });
+  function count(node){
+    var c = (node[""] || []).length;
+    for(var k in node) if(k !== "") c += count(node[k]);
+    return c;
+  }
+  function render(node, depth){
+    var h = "";
+    Object.keys(node).sort(function(a, b){ return a.localeCompare(b, "es"); }).forEach(function(k){
+      if(k === "") return;
+      var sub = render(node[k], depth + 1);
+      h += "<details" + (depth < 1 ? " open" : "") + "><summary>" + esc(k) + ' <span class="n">' + count(node[k]) + "</span></summary>" + '<div class="kids">' + sub + "</div></details>";
+    });
+    (node[""] || []).slice().sort(function(a, b){ return a.t.localeCompare(b.t, "es"); }).forEach(function(n){
+      h += '<a class="tn" data-p="' + esc(n.p) + '" href="#/' + encodeURI(n.p) + '">' + esc(n.t) + "</a>";
+    });
+    return h;
+  }
+  return render(root, 0);
+}
+
+/* ── render de nota ── */
+function metaBand(n){
+  var chips = [];
+  (n.tags || []).forEach(function(t){ chips.push('<span class="chip"><b>tag</b>' + esc(t) + "</span>"); });
+  ["ID", "Status", "Extra", "L"].forEach(function(k){
+    if(n.meta && n.meta[k]) chips.push('<span class="chip"><b>' + k + "</b>" + esc(n.meta[k]) + "</span>");
+  });
+  return chips.length ? '<div class="meta">' + chips.join("") + "</div>" : "";
+}
+function crumb(p){
+  return p.split("/").map(function(s){ return esc(s.replace(/\.md$/, "")); }).join(" › ");
+}
+function renderNote(p, text){
+  var lines = text.split("\n");
+  // salta cabeceras meta y el primer H1 (el título ya va en la banda)
+  var body = [], seenH1 = false;
+  var start = 0, skipped = 0;
+  while(start < lines.length && skipped < 15){
+    var s = lines[start].trim();
+    if(/^#\s+/.test(s) && !seenH1){ seenH1 = true; start++; skipped++; continue; }
+    if(/^[A-Za-z]+:\s/.test(s) && !s.startsWith("#") && /^[A-Za-z]+$/.test(s.split(":")[0]) && ["Tags","ID","Extra","L","Status"].indexOf(s.split(":")[0]) >= 0){ start++; skipped++; continue; }
+    if(/^:\s*\d*\s*$/.test(s)){ start++; skipped++; continue; }
+    if(!s){ start++; skipped++; continue; }
+    break;
+  }
+  body = lines.slice(start);
+  var html = blocks(body);
+  var n = byPath[p];
+  var empty = !body.join("").trim();
+  var doc = document.getElementById("doc");
+  doc.innerHTML = '<div class="crumb">' + crumb(p) + "</div>" + metaBand(n)
+    + '<div class="prosa"><h1>' + esc(n.t) + "</h1>"
+    + (empty ? '<div class="vacio"><strong>Nota vacía.</strong> Pendiente de redacción.</div>' : html)
+    + "</div>" + backHtml(p);
+  postProcess(doc, p.split("/").slice(0, -1).join("/") + "/");
+  document.title = n.t + " · Arreglo Institucional";
+  markActive(p);
+}
+function backHtml(p){
+  var bs = backlinks[p] || [];
+  if(!bs.length) return "";
+  return '<div class="back"><div class="back__label">Citado por</div>' + bs.map(function(q){
+    return '<a href="#/' + encodeURI(q) + '">' + esc(byPath[q] ? byPath[q].t : q) + "</a>";
+  }).join("") + "</div>";
+}
+function markActive(p){
+  var as = document.querySelectorAll(".tn");
+  for(var i = 0; i < as.length; i++) as[i].classList.toggle("is-active", as[i].getAttribute("data-p") === p);
+}
+function welcome(){
+  var roots = {}, total = M.notes.length;
+  M.notes.forEach(function(n){ var r = n.p.split("/")[0]; roots[r] = (roots[r] || 0) + 1; });
+  var stats = Object.keys(roots).sort().map(function(r){
+    return '<div class="stat"><b>' + roots[r] + "</b><span>" + esc(r) + "</span></div>";
+  }).join("");
+  document.getElementById("doc").innerHTML = '<div class="bienvenida"><h1>Notas del arreglo.</h1>'
+    + "<p>El corpus del <strong>arreglo institucional</strong>: cada consejo, agencia y laboratorio con su nota. Elige en el índice, busca arriba o sigue los links entre notas.</p>"
+    + '<div class="stats"><div class="stat"><b>' + total + "</b><span>notas</span></div>" + stats + "</div>"
+    + "<p>Fuente: <strong>docs/</strong> en Markdown · Manifest: <strong>notas.json</strong> · Sin mkdocs.</p></div>";
+  document.title = "Notas del arreglo institucional · Memorial Dominicanensis";
+  markActive(null);
+}
+function route(){
+  var h = decodeURIComponent(location.hash || "");
+  var p = h.slice(0, 2) === "#/" ? h.slice(2) : null;
+  if(!p || !byPath[p]){ welcome(); return; }
+  var doc = document.getElementById("doc");
+  doc.innerHTML = '<div class="prosa"><p>Cargando nota…</p></div>';
+  fetch(DOCS + encodeURI(p).replace(/#/g, "%23")).then(function(r){
+    if(!r.ok) throw 0;
+    return r.text();
+  }).then(function(t){ renderNote(p, t); }).catch(function(){
+    doc.innerHTML = '<div class="error"><strong>No se pudo cargar la nota.</strong> Sirve el sitio por HTTP (<code>python3 -m http.server</code>); <code>file://</code> bloquea la lectura.</div>';
+  });
+}
+
+/* ── búsqueda ── */
+function search(q){
+  q = q.trim().toLowerCase();
+  var as = document.querySelectorAll(".tn"), shown = 0;
+  for(var i = 0; i < as.length; i++){
+    var p = as[i].getAttribute("data-p"), n = byPath[p];
+    var hay = (n.t + " " + p + " " + (n.tags || []).join(" ") + " " + (n.x || "")).toLowerCase();
+    var ok = !q || hay.indexOf(q) >= 0;
+    as[i].style.display = ok ? "" : "none";
+    if(ok) shown++;
+  }
+  var ds = document.querySelectorAll("#tree details");
+  for(var j = ds.length - 1; j >= 0; j--){
+    var d = ds[j], vis = false, kids = d.querySelectorAll(":scope > .kids .tn");
+    if(!kids.length) kids = d.querySelectorAll(".tn");
+    for(var k = 0; k < kids.length; k++) if(kids[k].style.display !== "none"){ vis = true; break; }
+    d.style.display = (!q || vis) ? "" : "none";
+    if(q && vis) d.open = true;
+  }
+  document.getElementById("count").textContent = q ? shown + " / " + M.notes.length + " notas" : M.notes.length + " notas";
+}
+
+/* ── init ── */
+fetch("notas.json").then(function(r){
+  if(!r.ok) throw 0;
+  return r.json();
+}).then(function(m){
+  M = m;
+  m.notes.forEach(function(n){ byPath[n.p] = n; });
+  backlinks = m.backlinks || {};
+  document.getElementById("tree").innerHTML = buildTree(m.notes);
+  document.getElementById("count").textContent = m.notes.length + " notas";
+  document.getElementById("q").addEventListener("input", function(e){ search(e.target.value); });
+  window.addEventListener("hashchange", route);
+  route();
+}).catch(function(){
+  document.getElementById("doc").innerHTML = '<div class="error"><strong>No se pudo cargar notas.json.</strong> Sirve el sitio por HTTP (<code>python3 -m http.server</code>); <code>file://</code> bloquea la lectura.</div>';
+});
+</script>
+
+</body>
+</html>

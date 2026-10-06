@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treemap del arreglo · Arreglo Institucional</title>
+<meta name="description" content="Treemap progresivo del corpus del arreglo institucional: desciende nivel a nivel por consejos, agencias y laboratorios hasta cada nota.">
+<meta name="theme-color" content="#17181C">
+<link rel="icon" href="../../favicon.ico">
+<link rel="stylesheet" href="../../css/tipografia.css">
+<style>
+:root{
+  --paper:#ffffff; --paper-2:#f4f5f8; --paper-3:#edeef3;
+  --ink:#17181c; --ink-2:#45484f; --ink-3:#63666f; --ink-muted:#9d9fa9;
+  --steel:#3a5fb5; --peri-tint:#f2f5fd;
+  --lime:#c9e96e; --lime-deep:#4d7c0f; --lime-soft:#def2a2;
+  --line:#e7e8ee; --line-2:#f0f1f5; --line-strong:#d9dbe3;
+  --canvas:#e6e7ee; --navy:#17181c; --radius:16px;
+  --sans:"et-book",Palatino,"Palatino Linotype","Palatino LT STD","Book Antiqua",Georgia,serif;
+  --mono:Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  --shadow-card:0 1px 2px rgba(23,24,28,.03),0 10px 26px -22px rgba(23,24,28,.16);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--sans);font-size:.875rem;line-height:1.5;color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+a{color:inherit}
+.wrap{width:100%;max-width:1440px;margin:0 auto;padding:0 1.2rem}
+::selection{background:var(--lime-soft);color:var(--ink)}
+
+.topbar{background:var(--paper);border-bottom:1px solid var(--line);flex:0 0 auto}
+.topbar__in{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.brand__logo{width:32px;height:32px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.brand__text{display:flex;flex-direction:column;line-height:1.15}
+.brand__name{font-weight:700;font-size:.95rem;letter-spacing:-.01em}
+.brand__sub{font-family:var(--mono);font-size:.56rem;letter-spacing:.24em;color:var(--lime-deep);font-weight:600}
+.topnav{display:flex;align-items:center;gap:1.4rem}
+.topnav a{font-size:.8rem;color:var(--ink-2);text-decoration:none}
+.topnav a:hover{color:var(--ink)}
+
+main{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:1rem 0 .4rem}
+.toolbar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem}
+.search{flex:1 1 220px;min-width:170px;font-family:var(--sans);font-size:.82rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:.5rem .7rem;outline:none}
+.search:focus{border-color:var(--steel)}
+.btn{font-family:var(--mono);font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;font-weight:600;color:var(--ink-2);background:var(--paper);border:1px solid var(--line-strong);border-radius:10px;padding:.5rem .75rem;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.btn:hover{border-color:var(--ink);color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.on{background:var(--navy);border-color:var(--navy);color:var(--lime)}
+.count{font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;color:var(--ink-muted);white-space:nowrap;margin-left:auto}
+.crumb{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;color:var(--ink-muted);margin-bottom:.7rem;min-height:1.2em}
+.crumb button{font:inherit;color:var(--ink-2);background:none;border:0;cursor:pointer;padding:.1rem .25rem;border-radius:6px}
+.crumb button:hover{background:var(--paper-2);color:var(--ink)}
+.crumb .sep{color:var(--line-strong)}
+.crumb .here{color:var(--ink);font-weight:600}
+
+#map{position:relative;flex:1 1 auto;min-height:360px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-card);overflow:hidden;transition:border-color .2s}
+.cell{position:absolute;overflow:hidden;opacity:1;transition:left .34s var(--ease),top .34s var(--ease),width .34s var(--ease),height .34s var(--ease),background .2s,opacity .28s;-webkit-tap-highlight-color:transparent;border-radius:3px}
+.cell.branch{cursor:zoom-in}
+.cell.leaf{cursor:pointer}
+.cell.leaf:hover{filter:brightness(1.06)}
+.cell .lbl{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;gap:.15rem;padding:.5rem .6rem;pointer-events:none;overflow:hidden}
+.cell .nm{font-size:.8rem;font-weight:600;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;word-break:break-word}
+.cell .sub{font-family:var(--mono);font-size:.58rem;letter-spacing:.03em;font-weight:400;opacity:.82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:.6rem;pointer-events:none}
+.cell .mid .nm{font-size:1.05rem;-webkit-line-clamp:3}
+.cell .mid .sub{font-size:.66rem;margin-top:.25rem}
+.cell.dim{opacity:.12}
+.cell.hit{outline:2px solid var(--ink);outline-offset:-2px;z-index:9000 !important}
+.cell.ancestor{opacity:.72}
+.cell:focus-visible{outline:2px solid var(--steel);outline-offset:-2px}
+.cell .chev{position:absolute;right:.45rem;bottom:.35rem;font-family:var(--mono);font-size:.7rem;opacity:.55;pointer-events:none}
+
+.legend{display:flex;gap:.4rem;flex-wrap:wrap;margin:.7rem 0 .9rem}
+.lg{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.03em;color:var(--ink-2);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:.22rem .6rem;cursor:pointer;transition:border-color .15s}
+.lg:hover{border-color:var(--line-strong)}
+.lg i{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.lg .n{color:var(--ink-muted)}
+
+footer{border-top:1px solid var(--line);background:var(--paper);flex:0 0 auto}
+.foot__in{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0;flex-wrap:wrap}
+.foot__links{display:flex;gap:1.3rem}
+.foot__links a{font-size:.78rem;color:var(--ink-2);text-decoration:none}
+.foot__links a:hover{color:var(--ink)}
+.foot__brand{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--ink-muted);text-decoration:none}
+
+#tip{position:fixed;z-index:10000;pointer-events:none;max-width:320px;background:var(--paper);border:1px solid var(--line-strong);border-radius:10px;box-shadow:var(--shadow-card);padding:.55rem .7rem;font-size:.74rem;line-height:1.45;color:var(--ink-2);opacity:0;transition:opacity .12s}
+#tip strong{color:var(--ink);font-size:.8rem;font-weight:600}
+#tip .tp{font-family:var(--mono);font-size:.56rem;color:var(--ink-muted);display:block;margin-top:.25rem;word-break:break-all}
+#tip .tt{font-family:var(--mono);font-size:.56rem;color:var(--steel);display:block;margin-top:.25rem}
+.state{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:.4rem;color:var(--ink-3);font-size:.85rem;padding:1.5rem}
+.state code{font-family:var(--mono);font-size:.72rem;background:var(--paper-2);padding:.1rem .35rem;border-radius:6px}
+
+@media (max-width:640px){
+  .topnav a:not(.is-cta){display:none}
+  #map{min-height:300px}
+  .cell .mid .nm{font-size:.9rem}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__in">
+    <a class="brand" href="index.html">
+      <img class="brand__logo" src="../../img/logo.webp" alt="">
+      <div class="brand__text">
+        <span class="brand__name">Arreglo Institucional</span>
+        <span class="brand__sub">TREEMAP</span>
+      </div>
+    </a>
+    <nav class="topnav">
+      <a href="index.html">Índice</a>
+      <a href="notas.html">Notas</a>
+      <a class="is-cta" href="../../index.html">← Memorial</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="toolbar">
+    <input class="search" id="q" type="search" placeholder="Buscar nota, ruta o tag…" autocomplete="off" aria-label="Buscar">
+    <button class="btn" id="up" title="Subir un nivel (Backspace)">↑ Subir</button>
+    <button class="btn" id="metric" title="Alternar métrica">Métrica: notas</button>
+    <button class="btn" id="reset" title="Volver a la raíz y limpiar la búsqueda (Esc)">Restablecer</button>
+    <span class="count" id="count">…</span>
+  </div>
+  <nav class="crumb" id="crumb" aria-label="Ruta"></nav>
+  <div id="map" role="tree" aria-label="Treemap del arreglo"></div>
+  <div class="legend" id="legend"></div>
+</main>
+
+<footer>
+  <div class="wrap foot__in">
+    <a class="foot__brand" href="index.html">ARREGLO INSTITUCIONAL · MEMORIAL</a>
+    <div class="foot__links">
+      <a href="notas.html">Notas</a>
+      <a href="index.html">Índice</a>
+      <a href="../../index.html">Memorial</a>
+    </div>
+  </div>
+</footer>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+"use strict";
+var PALETTE = ["#3a5fb5","#4d7c0f","#0e7490","#7c3aed","#b45309","#be123c","#15803d","#c2410c","#0f766e","#6366f1","#a21caf","#92400e","#475569"];
+var metric = "notes";                 // 'notes' | 'bytes'
+var root = null, current = null, byPath = {}, branchColor = {}, leaves = [];
+var cellEls = new Map();
+var container = document.getElementById("map");
+var tip = document.getElementById("tip");
+var origin = null;                    // rect de origen para la animación FLIP
+
+/* ── color ── */
+function hexRgb(h){ h = h.replace("#",""); return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)}; }
+function mix(h, to, t){ var c=hexRgb(h), d=hexRgb(to); var m=function(a,b){return Math.round(a+(b-a)*t);}; return "rgb("+m(c.r,d.r)+","+m(c.g,d.g)+","+m(c.b,d.b)+")"; }
+function lum(h){ var c=hexRgb(h), f=function(x){ x/=255; return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4); }; return .2126*f(c.r)+.7152*f(c.g)+.0722*f(c.b); }
+function textOn(h){ return lum(h)>.55 ? "#17181c" : "#ffffff"; }
+function baseColor(node){ return branchColor[node.branch] || "#9d9fa9"; }
+
+/* ── árbol ── */
+function buildTree(notes){
+  var r = {name:"docs", path:"", children:[], leaf:false, depth:0, branch:""};
+  var dirs = new Map(); dirs.set("", r);
+  for(var i=0;i<notes.length;i++){
+    var n = notes[i], segs = n.p.split("/"), parent = r, acc = "";
+    for(var k=0;k<segs.length-1;k++){
+      acc = acc ? acc+"/"+segs[k] : segs[k];
+      var d = dirs.get(acc);
+      if(!d){ d = {name:segs[k], path:acc, children:[], leaf:false, depth:k+1, branch:segs[0]}; dirs.set(acc,d); parent.children.push(d); }
+      parent = d;
+    }
+    parent.children.push({name:segs[segs.length-1].replace(/\.md$/,""), path:n.p, children:null, leaf:true, note:n, depth:segs.length, branch:segs[0]});
+  }
+  return r;
+}
+function valueOf(node){
+  if(node.leaf) return metric === "bytes" ? Math.max(node.note.b, 0) : 1;
+  var s = 0; for(var i=0;i<node.children.length;i++) s += valueOf(node.children[i]);
+  return s;
+}
+function countLeaves(node){
+  if(node.leaf) return 1;
+  var s = 0; for(var i=0;i<node.children.length;i++) s += countLeaves(node.children[i]);
+  return s;
+}
+function indexNodes(node){
+  if(node.path) byPath[node.path] = node;
+  if(node.leaf) leaves.push(node);
+  else for(var i=0;i<node.children.length;i++) indexNodes(node.children[i]);
+}
+
+/* ── squarified treemap (un nivel) ── */
+function worstRatio(row, area, side){
+  var mx=0, mn=Infinity;
+  for(var i=0;i<row.length;i++){ var a=row[i].a; if(a>mx)mx=a; if(a<mn)mn=a; }
+  var s2 = side*side;
+  return Math.max(s2*mx/(area*area), (area*area)/(s2*mn));
+}
+function squarify(items, x, y, w, h, out){
+  var i = 0, n = items.length;
+  while(i < n && w > 0.5 && h > 0.5){
+    var side = Math.min(w, h);
+    var row = [items[i]], area = items[i].a; i++;
+    while(i < n){
+      var na = area + items[i].a;
+      if(worstRatio(row, area, side) >= worstRatio(row.concat([items[i]]), na, side)){ row.push(items[i]); area = na; i++; }
+      else break;
+    }
+    var strip = area / side;
+    if(w >= h){
+      var cy = y;
+      for(var r=0;r<row.length;r++){ var ch = strip ? row[r].a/strip : 0; out.push({node:row[r].node, x:x, y:cy, w:strip, h:ch, sib:row[r].sib}); cy += ch; }
+      x += strip; w -= strip;
+    } else {
+      var cx = x;
+      for(var c=0;c<row.length;c++){ var cw = strip ? row[c].a/strip : 0; out.push({node:row[c].node, x:cx, y:y, w:cw, h:strip, sib:row[c].sib}); cx += cw; }
+      y += strip; h -= strip;
+    }
+  }
+}
+
+/* ── render de un nivel ── */
+function computeRects(){
+  var W = container.clientWidth, H = container.clientHeight;
+  var kids = (current.children || []);
+  var items = [];
+  for(var i=0;i<kids.length;i++){ var v = valueOf(kids[i]); if(v>0) items.push({node:kids[i], value:v, sib:i}); }
+  items.sort(function(a,b){ return b.value-a.value; });
+  var rects = [];
+  if(items.length){
+    var total = 0; for(var t=0;t<items.length;t++) total += items[t].value;
+    var area = W*H;
+    var scaled = items.map(function(d){ return {node:d.node, a:d.value/total*area, sib:d.sib}; });
+    squarify(scaled, 0, 0, W, H, rects);
+  }
+  return rects;
+}
+function labelFor(d){
+  var node = d.node, isLeaf = node.leaf;
+  if(d.w < 46 || d.h < 26) return "";
+  var big = d.w > 150 && d.h > 90;
+  var cls = big ? "mid" : "lbl";
+  var sub = "";
+  if(isLeaf){
+    var tags = (node.note.tags||[]).slice(0,2).join(" · ");
+    if(d.h > 44 && d.w > 90) sub = '<span class="sub">' + esc(tags || fmtVal(1)) + "</span>";
+  } else {
+    var v = valueOf(node);
+    sub = '<span class="sub">' + esc(fmtVal(v)) + "</span>";
+  }
+  var chev = (!isLeaf && d.w > 70 && d.h > 44) ? '<span class="chev">↘</span>' : "";
+  return '<div class="' + cls + '"><span class="nm">' + esc(node.name) + "</span>" + sub + "</div>" + chev;
+}
+function paint(rects){
+  var W = container.clientWidth, H = container.clientHeight;
+  var org = origin || {x:W/2, y:H/2, w:0, h:0};
+  var seen = new Set(), fresh = [];
+  for(var i=0;i<rects.length;i++){
+    var d = rects[i], node = d.node, key = node.path, isLeaf = node.leaf;
+    seen.add(key);
+    var el = cellEls.get(key), isNew = false;
+    if(!el){
+      el = document.createElement("div");
+      el.className = "cell";
+      el.dataset.path = key;
+      el.tabIndex = 0;
+      el.setAttribute("role", isLeaf ? "treeitem" : "button");
+      container.appendChild(el);
+      cellEls.set(key, el);
+      isNew = true;
+    }
+    el.classList.toggle("leaf", isLeaf);
+    el.classList.toggle("branch", !isLeaf);
+    el.style.zIndex = node.depth;
+    var base = baseColor(node), bg, fg;
+    if(isLeaf){ bg = mix(base,"#ffffff",.06); fg = textOn(bg); }
+    else { bg = mix(base,"#ffffff", (d.sib % 2) ? .68 : .55); fg = mix(base,"#000000",.22); }
+    el.style.background = bg;
+    el.style.color = fg;
+    el.style.boxShadow = "inset 0 0 0 1px " + mix(base,"#ffffff",.3);
+    el.innerHTML = labelFor(d);
+    el.setAttribute("aria-label", node.name + (isLeaf ? "" : " (" + fmtVal(valueOf(node)) + ")"));
+    if(isNew){
+      el.style.transition = "none";
+      el.style.left = org.x+"px"; el.style.top = org.y+"px"; el.style.width = org.w+"px"; el.style.height = org.h+"px";
+      el.style.opacity = "0";
+      el._t = {x:d.x, y:d.y, w:d.w, h:d.h};
+      fresh.push(el);
+    } else {
+      el.style.left = d.x+"px"; el.style.top = d.y+"px"; el.style.width = d.w+"px"; el.style.height = d.h+"px";
+    }
+  }
+  cellEls.forEach(function(el, key){
+    if(!seen.has(key)){ cellEls.delete(key); el.style.opacity = "0"; setTimeout(function(){ el.remove(); }, 300); }
+  });
+  if(fresh.length){
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      for(var j=0;j<fresh.length;j++){ var e = fresh[j], t = e._t; e.style.transition = ""; e.style.left = t.x+"px"; e.style.top = t.y+"px"; e.style.width = t.w+"px"; e.style.height = t.h+"px"; e.style.opacity = "1"; }
+    }); });
+  }
+  origin = null;
+}
+function render(){
+  if(!current) return;
+  var W = container.clientWidth, H = container.clientHeight;
+  if(!W || !H) return;
+  paint(computeRects());
+  drawCrumb();
+  applySearch();
+  document.getElementById("up").disabled = (current === root);
+}
+
+/* ── migas ── */
+function drawCrumb(){
+  var crumb = document.getElementById("crumb");
+  var segs = current.path ? current.path.split("/") : [];
+  var html = '<button data-go="">docs</button>', acc = "";
+  for(var i=0;i<segs.length;i++){
+    acc = acc ? acc+"/"+segs[i] : segs[i];
+    var here = i === segs.length-1;
+    html += '<span class="sep">›</span><button data-go="' + esc(acc) + '"' + (here?' class="here"':"") + ">" + esc(segs[i].replace(/\.md$/,"")) + "</button>";
+  }
+  crumb.innerHTML = html;
+}
+
+/* ── navegación ── */
+function rectOf(path){
+  var el = cellEls.get(path);
+  if(el && el.style.width){ return {x:parseFloat(el.style.left)||0, y:parseFloat(el.style.top)||0, w:parseFloat(el.style.width)||0, h:parseFloat(el.style.height)||0}; }
+  var W = container.clientWidth, H = container.clientHeight; return {x:W/2,y:H/2,w:0,h:0};
+}
+function setHash(){
+  try{ history.replaceState(null, "", current.path ? "#/" + encodeURI(current.path) : "#/"); }catch(e){}
+}
+function zoom(node, org){
+  if(!node) return;
+  current = node; origin = org || null; render(); setHash();
+}
+function goUp(){
+  if(current === root) return;
+  var parent = byPath[current.path.split("/").slice(0,-1).join("/")] || root;
+  zoom(parent, {x:0, y:0, w:container.clientWidth, h:container.clientHeight});
+}
+function goRoot(){ zoom(root, {x:0, y:0, w:container.clientWidth, h:container.clientHeight}); }
+function reset(){ document.getElementById("q").value = ""; goRoot(); }
+
+/* ── búsqueda ── */
+function norm(s){ return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase(); }
+function matchSet(q){
+  q = norm(q.trim());
+  if(!q) return null;
+  var set = new Set();
+  for(var i=0;i<leaves.length;i++){
+    var n = leaves[i].note;
+    if(norm(n.t + " " + n.p + " " + (n.tags||[]).join(" ")).indexOf(q) >= 0) set.add(n.p);
+  }
+  return set;
+}
+function applySearch(){
+  var set = matchSet(document.getElementById("q").value);
+  var countEl = document.getElementById("count");
+  if(!set){
+    cellEls.forEach(function(el){ el.classList.remove("dim","hit","ancestor"); });
+    countEl.textContent = countLeaves(current) + " notas aquí · " + totalNotes() + " en total";
+    return;
+  }
+  var anc = new Set();
+  set.forEach(function(p){ var segs=p.split("/"), acc=""; for(var i=0;i<segs.length-1;i++){ acc=acc?acc+"/"+segs[i]:segs[i]; anc.add(acc); } });
+  cellEls.forEach(function(el, key){
+    var node = byPath[key]; if(!node) return;
+    var isHit = node.leaf && set.has(node.path);
+    var isAnc = !node.leaf && anc.has(node.path);
+    el.classList.toggle("hit", isHit);
+    el.classList.toggle("ancestor", isAnc);
+    el.classList.toggle("dim", !isHit && !isAnc);
+  });
+  countEl.textContent = set.size + " coincidencia" + (set.size===1?"":"s");
+}
+function commonAncestor(paths){
+  if(!paths.length) return null;
+  var lists = paths.map(function(p){ return p.split("/").slice(0,-1); });
+  var first = lists[0], common = [];
+  for(var i=0;i<first.length;i++){
+    var seg = first[i], ok = true;
+    for(var j=1;j<lists.length;j++){ if(lists[j][i] !== seg){ ok=false; break; } }
+    if(!ok) break;
+    common.push(seg);
+  }
+  var path = common.join("/");
+  return path ? (byPath[path] || root) : root;
+}
+function zoomToMatch(){
+  var set = matchSet(document.getElementById("q").value);
+  if(!set || !set.size) return;
+  var a = commonAncestor(Array.from(set));
+  if(a) zoom(a, {x:0, y:0, w:container.clientWidth, h:container.clientHeight});
+}
+
+/* ── utilidades ── */
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function fmtBytes(b){ if(b < 1024) return b + " B"; if(b < 1048576) return (b/1024).toFixed(b<10240?1:0) + " KB"; return (b/1048576).toFixed(1) + " MB"; }
+function fmtVal(v){ return metric === "bytes" ? fmtBytes(v) : v + (v===1?" nota":" notas"); }
+function totalNotes(){ var s=0; for(var i=0;i<leaves.length;i++) s += metric==="bytes"?leaves[i].note.b:1; return metric==="bytes"?fmtBytes(s):s; }
+function hideTip(){ tip.style.opacity = "0"; }
+
+/* ── eventos ── */
+container.addEventListener("click", function(e){
+  var el = e.target.closest(".cell"); if(!el) return;
+  var node = byPath[el.dataset.path]; if(!node) return;
+  if(node.leaf){ location.href = "notas.html#/" + encodeURI(node.path); }
+  else { zoom(node, rectOf(node.path)); }
+});
+container.addEventListener("keydown", function(e){
+  if(e.key !== "Enter" && e.key !== " ") return;
+  var el = e.target.closest(".cell"); if(!el) return;
+  e.preventDefault(); el.click();
+});
+container.addEventListener("mousemove", function(e){
+  var el = e.target.closest(".cell");
+  if(!el){ hideTip(); return; }
+  var node = byPath[el.dataset.path]; if(!node) return;
+  var v = node.leaf ? 1 : valueOf(node);
+  tip.innerHTML = "<strong>" + esc(node.name) + "</strong><span class=\"tp\">" + esc(node.path) +
+    "</span><span class=\"tt\">" + esc(fmtVal(v)) + (node.leaf && (node.note.tags||[]).length ? " · " + esc(node.note.tags.join(" · ")) : "") + "</span>";
+  tip.style.opacity = "1";
+  tip.style.left = Math.max(8, Math.min(e.clientX + 14, window.innerWidth - 340)) + "px";
+  tip.style.top = Math.max(8, Math.min(e.clientY + 16, window.innerHeight - 90)) + "px";
+});
+container.addEventListener("mouseleave", hideTip);
+
+document.getElementById("crumb").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-go]"); if(!b) return;
+  var p = b.getAttribute("data-go");
+  zoom(p ? (byPath[p] || root) : root, {x:0, y:0, w:container.clientWidth, h:container.clientHeight});
+});
+document.getElementById("up").addEventListener("click", goUp);
+document.getElementById("q").addEventListener("input", applySearch);
+document.getElementById("q").addEventListener("keydown", function(e){ if(e.key === "Enter") zoomToMatch(); });
+document.getElementById("reset").addEventListener("click", reset);
+document.getElementById("metric").addEventListener("click", function(){
+  metric = metric === "notes" ? "bytes" : "notes";
+  this.textContent = "Métrica: " + (metric === "notes" ? "notas" : "bytes");
+  this.classList.toggle("on", metric === "bytes");
+  origin = {x:0, y:0, w:container.clientWidth, h:container.clientHeight};
+  render();
+});
+window.addEventListener("resize", function(){
+  origin = {x:0, y:0, w:container.clientWidth, h:container.clientHeight};
+  render();
+});
+window.addEventListener("keydown", function(e){
+  var tag = (e.target.tagName || "").toLowerCase();
+  if(tag === "input" || tag === "textarea") return;
+  if(e.key === "Escape") reset();
+  else if(e.key === "Backspace"){ e.preventDefault(); goUp(); }
+});
+window.addEventListener("hashchange", function(){
+  var p = decodeURI((location.hash||"").replace(/^#\/?/,""));
+  if(p && byPath[p] && byPath[p] !== current) zoom(byPath[p], null);
+  else if(!p && current !== root) zoom(root, null);
+});
+
+/* ── leyenda ── */
+function buildLegend(){
+  var counts = {};
+  for(var i=0;i<leaves.length;i++) counts[leaves[i].branch] = (counts[leaves[i].branch]||0)+1;
+  var names = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a]; });
+  document.getElementById("legend").innerHTML = names.map(function(nm){
+    return '<button class="lg" data-branch="' + esc(nm) + '"><i style="background:' + branchColor[nm] + '"></i>' + esc(nm) + ' <span class="n">' + counts[nm] + "</span></button>";
+  }).join("");
+}
+document.getElementById("legend").addEventListener("click", function(e){
+  var b = e.target.closest(".lg"); if(!b) return;
+  var nm = b.getAttribute("data-branch");
+  zoom(byPath[nm] || root, {x:0, y:0, w:container.clientWidth, h:container.clientHeight});
+});
+
+/* ── init ── */
+function fail(msg){ container.innerHTML = '<div class="state">' + msg + "</div>"; }
+fetch("notas.json").then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(m){
+  root = buildTree(m.notes); current = root;
+  indexNodes(root);
+  var names = {};
+  for(var i=0;i<leaves.length;i++) names[leaves[i].branch] = 1;
+  Object.keys(names).sort().forEach(function(nm, i){ branchColor[nm] = PALETTE[i % PALETTE.length]; });
+  buildLegend();
+  var p = decodeURI((location.hash||"").replace(/^#\/?/,""));
+  if(p && byPath[p]) current = byPath[p];
+  render();
+}).catch(function(){
+  fail("No se pudo cargar <code>notas.json</code>. Sirve el sitio por HTTP (<code>python3 -m http.server</code>); <code>file://</code> bloquea la lectura.");
+});
+</script>
+
+</body>
+</html>

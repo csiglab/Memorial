@@ -1,0 +1,1 @@
+# Seminario Menor en Filosofia y Lógica
