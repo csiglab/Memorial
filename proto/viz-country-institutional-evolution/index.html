@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebDiffs | Professional Site Comparison</title>
+    <style>
+        /* --- CSS VARIABLES --- */
+        :root {
+            --bg-app: #0f172a; /* From your snippet */
+            --panel-bg: rgba(30, 41, 59, 0.8);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --transition-speed: 0.4s;
+            --ui-font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --z-controls: 100;
+            --z-modal: 200;
+        }
+
+        /* --- RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--ui-font);
+            background-color: var(--bg-app);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            height: 60px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: var(--z-controls);
+            transition: transform var(--transition-speed) ease;
+        }
+
+        .brand { font-weight: 800; letter-spacing: -0.02em; font-size: 1.2rem; color: var(--accent-color); }
+
+        .controls-top {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Mode Switcher Tabs */
+        .mode-switch {
+            background: rgba(0,0,0,0.3);
+            padding: 4px;
+            border-radius: 8px;
+            display: flex;
+            gap: 4px;
+        }
+        
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mode-btn:hover { color: var(--text-main); }
+        .mode-btn.active {
+            background: var(--bg-app);
+            color: var(--accent-color);
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-btn:hover { background: var(--accent-color); color: var(--bg-app); }
+
+        /* --- MAIN VIEWPORT --- */
+        main {
+            flex: 1;
+            position: relative;
+            background: #000;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- IFRAME CONTAINER (SINGLE MODE) --- */
+        .iframe-wrapper {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+            transform: scale(0.98); /* Slight zoom out transition effect */
+        }
+
+        .iframe-wrapper.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+            z-index: 1;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Overlay Label for Site Index */
+        .overlay-label {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 10;
+            border: 1px solid var(--border-color);
+        }
+
+        /* --- BOTTOM NAVIGATION DOCK (The Requested Feature) --- */
+        .nav-dock {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 12px 24px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 40px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            z-index: var(--z-controls);
+            transition: all 0.3s ease;
+        }
+
+        /* Arrows inside dock */
+        .dock-arrow {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        .dock-arrow:hover { color: white; background: rgba(255,255,255,0.1); }
+        .dock-arrow:disabled { opacity: 0.2; cursor: default; }
+
+        /* The Dot Container */
+        .dot-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            max-width: 60vw;
+            padding: 4px 8px;
+            /* Hide scrollbar */
+            scrollbar-width: none; 
+        }
+        .dot-container::-webkit-scrollbar { display: none; }
+
+        /* The Buttons (Dots) */
+        .dot {
+            flex-shrink: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;
+            position: relative;
+        }
+
+        /* Tooltip for dots */
+        .dot::after {
+            content: attr(data-index);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            background: var(--bg-app);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+        .dot:hover::after { opacity: 1; }
+
+        .dot:hover {
+            background: rgba(255,255,255,0.5);
+            transform: scale(1.2);
+        }
+
+        .dot.active {
+            background: var(--accent-color);
+            transform: scale(1.4);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* --- MODE: GRID (OVERVIEW) --- */
+        .view-grid {
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            background: var(--bg-app);
+        }
+        .grid-item {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .grid-item:hover { border-color: var(--accent-color); }
+        .grid-item.selected { border: 2px solid var(--accent-color); }
+        .grid-item iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+            transform: scale(0.5);
+            transform-origin: top left;
+            width: 200%;
+            height: 200%;
+            pointer-events: none;
+        }
+        .grid-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 10px;
+            background: rgba(15, 23, 42, 0.9);
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- MODE: COMPARE (SIDE-BY-SIDE) --- */
+        .view-compare {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-app);
+        }
+        .compare-col {
+            flex: 1;
+            border-right: 1px solid var(--border-color);
+            position: relative;
+            min-width: 0;
+        }
+        .compare-col:last-child { border-right: none; }
+        .compare-col iframe { width: 100%; height: 100%; border: none; }
+        .compare-header {
+            position: absolute;
+            top: 10px; left: 10px;
+            background: var(--panel-bg);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            z-index: 10;
+            border: 1px solid var(--border-color);
+        }
+
+        /* --- UTILS --- */
+        .hidden { display: none !important; }
+        .immersive-mode .nav-dock,
+        .immersive-mode header {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .immersive-mode .nav-dock { transform: translate(-50%, 100%); }
+
+        /* Toast */
+        #toast-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 999;
+        }
+        .toast {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.9rem;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header id="main-header">
+        <div class="brand">WebDiffs</div>
+        
+        <div class="mode-switch">
+            <button class="mode-btn active" onclick="app.setMode('single')">Single</button>
+            <button class="mode-btn" onclick="app.setMode('grid')">Overview</button>
+            <button class="mode-btn" onclick="app.setMode('compare')">Compare</button>
+        </div>
+
+        <div class="controls-top">
+            <button class="action-btn hidden" id="btn-compare-action" onclick="app.startCompare()">
+                Compare Selected
+            </button>
+            <button class="action-btn" onclick="app.toggleImmersive()" id="btn-present">
+                📺 Immersive
+            </button>
+        </div>
+    </header>
+
+    <!-- Viewport -->
+    <main id="viewport">
+        <!-- Dynamic Content -->
+    </main>
+
+    <!-- Bottom Navigation Dock -->
+    <div id="nav-dock" class="nav-dock">
+        <button class="dock-arrow" id="btn-prev" onclick="app.prev()">←</button>
+        <div class="dot-container" id="dot-container">
+            <!-- Dots generated by JS -->
+        </div>
+        <button class="dock-arrow" id="btn-next" onclick="app.next()">→</button>
+    </div>
+
+    <!-- Toasts -->
+    <div id="toast-container"></div>
+
+    <script>
+        class WebDiffs {
+            constructor() {
+                this.sites = [];
+                this.currentIndex = 0;
+                this.currentMode = 'single'; // single, grid, compare
+                this.selectedIndices = new Set();
+                this.isImmersive = false;
+                
+                // Fallback Data
+                this.defaultSites = [
+                    { index: 1, url: "https://www.wikipedia.org" }
+                ];
+
+                this.init();
+            }
+
+            async init() {
+                try {
+                    const response = await fetch('url.json');
+                    if(!response.ok) throw new Error("JSON not found");
+                    const data = await response.json();
+                    this.sites = data.sort((a,b) => a.index - b.index);
+                } catch(e) {
+                    console.log("Using default sites", e);
+                    this.sites = this.defaultSites;
+                    this.showToast("Using default sites (url.json not found)");
+                }
+                
+                this.render();
+                this.attachListeners();
+            }
+
+            render() {
+                const viewport = document.getElementById('viewport');
+                const navDock = document.getElementById('nav-dock');
+                const btnCompare = document.getElementById('btn-compare-action');
+                
+                // Toggle Dock Visibility (Only in Single mode)
+                if (this.currentMode === 'single') {
+                    navDock.classList.remove('hidden');
+                    this.renderSingleMode(viewport);
+                    this.renderDots();
+                } else if (this.currentMode === 'grid') {
+                    navDock.classList.add('hidden');
+                    this.renderGridMode(viewport);
+                    btnCompare.classList.remove('hidden');
+                } else if (this.currentMode === 'compare') {
+                    navDock.classList.add('hidden');
+                    this.renderCompareMode(viewport);
+                    btnCompare.classList.add('hidden');
+                }
+
+                this.updateModeButtons();
+            }
+
+            // --- RENDERERS ---
+
+            renderSingleMode(container) {
+                container.innerHTML = '';
+                
+                this.sites.forEach((site, idx) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `iframe-wrapper ${idx === this.currentIndex ? 'active' : ''}`;
+                    wrapper.id = `frame-${idx}`;
+
+                    const iframe = document.createElement('iframe');
+                    // Lazy load logic: only set src if it's the current one or immediate neighbors to save memory
+                    if (Math.abs(idx - this.currentIndex) <= 1) {
+                        iframe.src = site.url;
+                    } else {
+                        iframe.dataset.src = site.url; // Store for later
+                    }
+
+                    const label = document.createElement('div');
+                    label.className = 'overlay-label';
+                    label.innerText = `Index: ${site.index}`;
+
+                    wrapper.appendChild(iframe);
+                    wrapper.appendChild(label);
+                    container.appendChild(wrapper);
+                });
+            }
+
+            renderDots() {
+                const container = document.getElementById('dot-container');
+                container.innerHTML = ''; // Clear
+
+                this.sites.forEach((site, idx) => {
+                    const dot = document.createElement('div');
+                    dot.className = `dot ${idx === this.currentIndex ? 'active' : ''}`;
+                    dot.dataset.index = site.index; // For tooltip
+                    dot.onclick = () => this.goTo(idx);
+                    container.appendChild(dot);
+                });
+
+                // Update Arrows
+                document.getElementById('btn-prev').disabled = this.currentIndex === 0;
+                document.getElementById('btn-next').disabled = this.currentIndex === this.sites.length - 1;
+            }
+
+            renderGridMode(container) {
+                container.innerHTML = `<div class="view-grid"></div>`;
+                const grid = container.querySelector('.view-grid');
+
+                this.sites.forEach(site => {
+                    const item = document.createElement('div');
+                    item.className = 'grid-item';
+                    if(this.selectedIndices.has(site.index)) item.classList.add('selected');
+                    
+                    item.onclick = () => {
+                        if(this.selectedIndices.has(site.index)) {
+                            this.selectedIndices.delete(site.index);
+                        } else {
+                            this.selectedIndices.add(site.index);
+                        }
+                        this.render(); // Re-render to update selection visual
+                    };
+
+                    const iframe = document.createElement('iframe');
+                    // Using placeholder or real site? Real site scaled
+                    iframe.src = site.url;
+                    iframe.loading = "lazy";
+
+                    const label = document.createElement('div');
+                    label.className = 'grid-label';
+                    label.innerHTML = `<span>#${site.index}</span> <span>${this.selectedIndices.has(site.index) ? 'SELECTED' : ''}</span>`;
+
+                    item.appendChild(iframe);
+                    item.appendChild(label);
+                    grid.appendChild(item);
+                });
+            }
+
+            renderCompareMode(container) {
+                container.innerHTML = '';
+                
+                if (this.selectedIndices.size < 2) {
+                    container.innerHTML = `
+                        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#94a3b8;">
+                            <h2>Select 2+ Sites</h2>
+                            <p>Go to Overview to select pages to compare.</p>
+                            <button onclick="app.setMode('grid')" style="margin-top:20px;padding:10px 20px;cursor:pointer;">Go to Grid</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'view-compare';
+
+                this.selectedIndices.forEach(idx => {
+                    const site = this.sites.find(s => s.index === idx);
+                    if(!site) return;
+
+                    const col = document.createElement('div');
+                    col.className = 'compare-col';
+
+                    const header = document.createElement('div');
+                    header.className = 'compare-header';
+                    header.innerText = `#${site.index}`;
+
+                    const iframe = document.createElement('iframe');
+                    iframe.src = site.url;
+
+                    col.appendChild(header);
+                    col.appendChild(iframe);
+                    wrapper.appendChild(col);
+                });
+
+                container.appendChild(wrapper);
+            }
+
+            // --- ACTIONS ---
+
+            goTo(index) {
+                if (index < 0 || index >= this.sites.length) return;
+                
+                // Single Mode: Cross-fade logic
+                const oldFrame = document.getElementById(`frame-${this.currentIndex}`);
+                const newFrame = document.getElementById(`frame-${index}`);
+
+                if(oldFrame) oldFrame.classList.remove('active');
+                if(newFrame) {
+                    newFrame.classList.add('active');
+                    // Lazy load neighbor
+                    const iframe = newFrame.querySelector('iframe');
+                    if (!iframe.src && iframe.dataset.src) {
+                        iframe.src = iframe.dataset.src;
+                    }
+                }
+
+                this.currentIndex = index;
+                this.renderDots(); // Update active dot
+            }
+
+            next() {
+                if (this.currentIndex < this.sites.length - 1) this.goTo(this.currentIndex + 1);
+            }
+
+            prev() {
+                if (this.currentIndex > 0) this.goTo(this.currentIndex - 1);
+            }
+
+            setMode(mode) {
+                this.currentMode = mode;
+                this.render();
+            }
+
+            startCompare() {
+                if (this.selectedIndices.size >= 2) {
+                    this.setMode('compare');
+                } else {
+                    this.showToast("Please select at least 2 sites in Overview mode.");
+                }
+            }
+
+            toggleImmersive() {
+                this.isImmersive = !this.isImmersive;
+                document.body.classList.toggle('immersive-mode', this.isImmersive);
+                
+                const btn = document.getElementById('btn-present');
+                btn.innerHTML = this.isImmersive ? "⛶ Exit" : "📺 Immersive";
+            }
+
+            updateModeButtons() {
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.innerText.toLowerCase() === this.currentMode);
+                });
+            }
+
+            attachListeners() {
+                window.addEventListener('keydown', (e) => {
+                    if (this.currentMode === 'single') {
+                        if (e.key === 'ArrowRight') this.next();
+                        if (e.key === 'ArrowLeft') this.prev();
+                    }
+                    if (e.key === 'p' || e.key === 'P') this.toggleImmersive();
+                    if (e.key === 'Escape' && this.isImmersive) this.toggleImmersive();
+                });
+            }
+
+            showToast(msg) {
+                const container = document.getElementById('toast-container');
+                const el = document.createElement('div');
+                el.className = 'toast';
+                el.innerText = msg;
+                container.appendChild(el);
+                setTimeout(() => el.remove(), 3000);
+            }
+        }
+
+        // Start App
+        const app = new WebDiffs();
+    </script>
+</body>
+</html>

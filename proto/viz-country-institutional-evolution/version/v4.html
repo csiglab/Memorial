@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Evolution: A Legacy of Governance</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --color-primary: #0f172a; /* Deep Navy - Authority */
+            --color-secondary: #b4975a; /* Bronze/Gold - Legacy */
+            --color-accent: #3b82f6; /* Modern Blue - Progress */
+            --color-bg: #f8fafc; /* Off-white */
+            --color-surface: #ffffff;
+            --color-text-main: #334155;
+            --color-text-light: #64748b;
+            
+            --font-heading: 'Playfair Display', serif;
+            --font-subheading: 'Cinzel', serif;
+            --font-body: 'Lato', sans-serif;
+            
+            --spacing-section: 6rem;
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            color: var(--color-primary);
+        }
+
+        h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 1.5rem; }
+        h2 { font-size: 2.5rem; margin-bottom: 1rem; text-align: center; }
+        h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        
+        .section-title-wrapper {
+            text-align: center;
+            margin-bottom: 4rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .subtitle {
+            font-family: var(--font-subheading);
+            color: var(--color-secondary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--color-secondary);
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 2px;
+            transition: var(--transition);
+            border: 1px solid var(--color-secondary);
+        }
+
+        .btn:hover {
+            background-color: transparent;
+            color: var(--color-secondary);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--color-primary);
+        }
+
+        /* --- NAVIGATION --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-family: var(--font-subheading);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span { color: var(--color-secondary); }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover { color: var(--color-secondary); }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle { display: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)),
+                        url('https://picsum.photos/seed/nationcapitol/1920/1080');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 1rem;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            animation: fadeIn Up 1s ease-out;
+        }
+
+        .hero h1 { color: white; }
+        
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- INTRO SECTION --- */
+        .intro {
+            padding: var(--spacing-section) 5%;
+            background-color: var(--color-surface);
+            text-align: center;
+        }
+        
+        .intro-text {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            color: var(--color-text-light);
+        }
+
+        /* --- TIMELINE SECTION (The Core) --- */
+        .timeline-section {
+            padding: var(--spacing-section) 5%;
+            position: relative;
+            background-color: #f1f5f9;
+        }
+
+        /* The Line */
+        .timeline-container::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--color-secondary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            border-radius: 2px;
+        }
+
+        .timeline-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+            box-sizing: border-box;
+            opacity: 0; /* Hidden for animation */
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item.left { left: 0; text-align: right; }
+        .timeline-item.right { left: 50%; }
+
+        /* The Dots */
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            background-color: var(--color-surface);
+            border: 4px solid var(--color-secondary);
+            top: 25px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .timeline-item.right::after { left: -10px; }
+
+        /* The Content Card */
+        .content-card {
+            padding: 2rem;
+            background-color: white;
+            position: relative;
+            border-radius: 4px;
+            box-shadow: var(--shadow-card);
+            border-top: 3px solid var(--color-primary);
+        }
+
+        .content-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .date-badge {
+            display: inline-block;
+            background-color: var(--color-primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            font-family: var(--font-subheading);
+            font-size: 0.8rem;
+            border-radius: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- INSTITUTIONAL PILLARS (Grid) --- */
+        .pillars {
+            padding: var(--spacing-section) 5%;
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .pillars h2 { color: white; }
+        .pillars .subtitle { color: rgba(255,255,255,0.7); }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pillar-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2.5rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .pillar-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.1);
+            border-color: var(--color-secondary);
+        }
+
+        .pillar-icon {
+            font-size: 2.5rem;
+            color: var(--color-secondary);
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .pillar-card h3 { color: white; margin-bottom: 1rem; }
+        .pillar-card p { color: rgba(255,255,255,0.7); font-size: 0.95rem; }
+
+        /* --- DATA / METRICS SECTION --- */
+        .metrics {
+            padding: var(--spacing-section) 5%;
+            background-color: var(--color-surface);
+            text-align: center;
+        }
+
+        .metrics-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .metric-item h4 {
+            font-size: 3rem;
+            color: var(--color-secondary);
+            font-family: var(--font-subheading);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-item p {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-text-light);
+        }
+
+        /* --- VISION / FOOTER --- */
+        .vision {
+            padding: 6rem 5%;
+            background: linear-gradient(to right, #0f172a, #1e293b);
+            color: white;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #020617;
+            color: rgba(255,255,255,0.4);
+            padding: 3rem 5%;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media screen and (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            
+            .menu-toggle { display: block; }
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--color-primary);
+                padding: 1rem;
+                text-align: center;
+            }
+            nav ul.show { display: flex; }
+
+            /* Timeline Responsive Fix */
+            .timeline-container::after { left: 31px; }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item.left, .timeline-item.right { left: 0; text-align: left; }
+            
+            .timeline-item.left::after, .timeline-item.right::after {
+                left: 21px; /* Align dots */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <header>
+        <div class="logo">
+            <span>&#9813;</span> THE REPUBLIC ARCHIVE
+        </div>
+        <div class="menu-toggle" id="mobile-menu">
+            &#9776;
+        </div>
+        <nav>
+            <ul id="nav-list">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#timeline">Evolution</a></li>
+                <li><a href="#pillars">Institutions</a></li>
+                <li><a href="#vision">Future</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <span class="subtitle">Established 1842</span>
+            <h1>From Foundations to Future:<br>A National Evolution</h1>
+            <p>Tracing the transformation of our governance, the strengthening of our institutions, and the enduring spirit of democracy over two centuries.</p>
+            <a href="#timeline" class="btn btn-outline">Explore the Timeline</a>
+            <a href="#pillars" class="btn">View Institutions</a>
+        </div>
+    </section>
+
+    <!-- INTRO SECTION -->
+    <section class="intro">
+        <div class="section-title-wrapper">
+            <span class="subtitle">Our History</span>
+            <h2>Built on Resilience</h2>
+        </div>
+        <div class="intro-text">
+            <p>The evolution of a nation is not merely a chronicle of dates, but a living testament to the adaptation of its institutional frameworks. From the early days of confederation to the digital age of governance, our structures have matured to serve the citizenry better. This platform documents the pivotal moments that defined our national character.</p>
+        </div>
+    </section>
+
+    <!-- TIMELINE SECTION -->
+    <section id="timeline" class="timeline-section">
+        <div class="section-title-wrapper">
+            <span class="subtitle">Chronological Progress</span>
+            <h2>Eras of Transformation</h2>
+        </div>
+
+        <div class="timeline-container">
+            <!-- Item 1 -->
+            <div class="timeline-item left">
+                <div class="content-card">
+                    <span class="date-badge">1842 - The Foundation</span>
+                    <img src="https://picsum.photos/seed/oldbuilding/600/400" alt="Old Capitol Building">
+                    <h3>The Grand Convention</h3>
+                    <p>Representatives from all provinces gathered to sign the Declaration of Unity. This marked the birth of the central legislative body and the formal establishment of the rule of law.</p>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="timeline-item right">
+                <div class="content-card">
+                    <span class="date-badge">1890 - Industrial Expansion</span>
+                    <img src="https://picsum.photos/seed/trains/600/400" alt="Industrial Revolution">
+                    <h3>Department of Infrastructure</h3>
+                    <p>With the rapid expansion of rail and industry, the government created the Department of Public Works to standardize national infrastructure and regulate interstate commerce.</p>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="timeline-item left">
+                <div class="content-card">
+                    <span class="date-badge">1924 - Social Reform</span>
+                    <img src="https://picsum.photos/seed/courtroom/600/400" alt="Supreme Court">
+                    <h3>The Judicial Reform Act</h3>
+                    <p>A landmark restructuring of the judicial system established the Supreme Court as the final arbiter of constitutional rights, ensuring checks and balances on executive power.</p>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="timeline-item right">
+                <div class="content-card">
+                    <span class="date-badge">1965 - Civil Rights Era</span>
+                    <img src="https://picsum.photos/seed/crowd/600/400" alt="Public Protest">
+                    <h3>Universal Suffrage Amendment</h3>
+                    <p>Institutional barriers were removed, expanding the electorate. This era saw the creation of the Electoral Commission to oversee free and fair democratic processes.</p>
+                </div>
+            </div>
+
+            <!-- Item 5 -->
+            <div class="timeline-item left">
+                <div class="content-card">
+                    <span class="date-badge">1998 - The Digital Age</span>
+                    <img src="https://picsum.photos/seed/tech/600/400" alt="Digital Network">
+                    <h3>E-Governance Initiative</h3>
+                    <p>The nation launched its first digital portal, allowing citizens to access public services online. This modernized the bureaucratic machinery and increased transparency.</p>
+                </div>
+            </div>
+
+            <!-- Item 6 -->
+            <div class="timeline-item right">
+                <div class="content-card">
+                    <span class="date-badge">Present - Global Integration</span>
+                    <img src="https://picsum.photos/seed/city/600/400" alt="Modern City Skyline">
+                    <h3>Sustainable Development Council</h3>
+                    <p>Responding to global climate challenges, the newest institution focuses on long-term environmental sustainability and economic resilience for future generations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INSTITUTIONAL PILLARS -->
+    <section id="pillars" class="pillars">
+        <div class="section-title-wrapper">
+            <span class="subtitle">Current Structure</span>
+            <h2>The Three Pillars</h2>
+        </div>
+
+        <div class="grid-container">
+            <div class="pillar-card">
+                <span class="pillar-icon">&#9878;</span> <!-- Scales of Justice -->
+                <h3>The Judiciary</h3>
+                <p>The guardian of the constitution. Independent courts ensure that laws are upheld and individual rights are protected against overreach.</p>
+            </div>
+            <div class="pillar-card">
+                <span class="pillar-icon">&#128196;</span> <!-- Document/Scroll -->
+                <h3>The Legislature</h3>
+                <p>The voice of the people. A bicameral parliament responsible for drafting legislation, approving budgets, and representing regional interests.</p>
+            </div>
+            <div class="pillar-card">
+                <span class="pillar-icon">&#9881;</span> <!-- Gear -->
+                <h3>The Executive</h3>
+                <p>The engine of action. Implementing laws, managing foreign relations, and directing the national administration for the welfare of the state.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- METRICS SECTION -->
+    <section class="metrics">
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <h4>182</h4>
+                <p>Years of Democracy</p>
+            </div>
+            <div class="metric-item">
+                <h4>45</h4>
+                <p>Ministries & Agencies</p>
+            </div>
+            <div class="metric-item">
+                <h4>12</h4>
+                <p>Constitutional Amendments</p>
+            </div>
+            <div class="metric-item">
+                <h4>100%</h4>
+                <p>Judicial Independence</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISION / CTA -->
+    <section id="vision" class="vision">
+        <div class="hero-content">
+            <h2>Forward Together</h2>
+            <p style="margin-bottom: 2rem; opacity: 0.9;">Institutions are not static; they are living organisms that must adapt to the changing needs of their people. Join us in shaping the next century of governance.</p>
+            <a href="#" class="btn">Read the 2030 Agenda</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div>
+            &copy; 2024 The Republic Archive. All Rights Reserved.
+        </div>
+        <div style="display: flex; gap: 1.5rem;">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Accessibility</a>
+            <a href="#">Contact</a>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT FOR INTERACTIONS -->
+    <script>
+        // 1. Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu');
+        const navList = document.getElementById('nav-list');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navList.classList.toggle('show');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                navList.classList.remove('show');
+            });
+        });
+
+        // 2. Scroll Animation (Intersection Observer)
+        // This triggers the 'visible' class on timeline items as they scroll into view
+        const observerOptions = {
+            threshold: 0.2, // Trigger when 20% of the item is visible
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Optional: Stop observing once visible to only animate once
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        timelineItems.forEach(item => {
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>

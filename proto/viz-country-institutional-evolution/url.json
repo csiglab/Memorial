@@ -1,0 +1,8 @@
+[
+  { "index": 0, "url": "http://localhost:5500/version/v1.html" },
+  { "index": 1, "url": "http://localhost:5500/version/v2.html" },
+  { "index": 2, "url": "http://localhost:5500/version/v3.html" },
+  { "index": 3, "url": "http://localhost:5500/version/v4.html" },
+  { "index": 4, "url": "http://localhost:5500/version/v5.html" },
+  { "index": 5, "url": "http://localhost:5500/version/v6.html" }
+]

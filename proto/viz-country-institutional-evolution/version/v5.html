@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Institution Evolution | Through Time</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --secondary: #c9a227;
+            --accent: #8b4513;
+            --light: #f5f1e8;
+            --dark: #0f172a;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .display {
+            font-family: 'Cinzel', serif;
+        }
+        
+        /* Grain texture overlay */
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        /* Timeline line */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--secondary), var(--secondary), transparent);
+        }
+        
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 30px;
+            }
+        }
+        
+        /* Era cards */
+        .era-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .era-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Parallax layers */
+        .parallax-bg {
+            will-change: transform;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        /* Hover effects */
+        .institution-node {
+            transition: all 0.4s ease;
+        }
+        
+        .institution-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        /* Text reveal animation */
+        .reveal-text {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+        
+        .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: revealChar 0.6s forwards;
+        }
+        
+        @keyframes revealChar {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Connection lines SVG */
+        .connection-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .connection-path {
+            fill: none;
+            stroke: var(--secondary);
+            stroke-width: 2;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s forwards;
+        }
+        
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        /* Golden ratio spacing */
+        .golden-section {
+            aspect-ratio: 1.618;
+        }
+        
+        /* Interactive map placeholder styling */
+        .map-container {
+            background: linear-gradient(135deg, #e8e0d0 0%, #d4c8b0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(30, 58, 95, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 58, 95, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: drift 20s linear infinite;
+        }
+        
+        @keyframes drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50px, -50px); }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body class="antialiased">
+    <div class="grain"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 bg-opacity-90 bg-[#f5f1e8] backdrop-blur-md border-b border-[#1e3a5f]/10 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-[#1e3a5f] rounded-full flex items-center justify-center">
+                        <span class="text-[#c9a227] font-bold text-lg display">N</span>
+                    </div>
+                    <span class="display text-xl font-semibold text-[#1e3a5f] tracking-wider">NATIONAL ARCHIVE</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#overview" class="text-[#1e3a5f] hover:text-[#c9a227] transition-colors text-sm uppercase tracking-widest">Overview</a>
+                    <a href="#timeline" class="text-[#1e3a5f] hover:text-[#c9a227] transition-colors text-sm uppercase tracking-widest">Timeline</a>
+                    <a href="#structure" class="text-[#1e3a5f] hover:text-[#c9a227] transition-colors text-sm uppercase tracking-widest">Structure</a>
+                    <a href="#impact" class="text-[#1e3a5f] hover:text-[#c9a227] transition-colors text-sm uppercase tracking-widest">Impact</a>
+                </div>
+                <button class="md:hidden text-[#1e3a5f]" onclick="toggleMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#f5f1e8] border-t border-[#1e3a5f]/10">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#overview" class="block px-3 py-2 text-[#1e3a5f] hover:text-[#c9a227]">Overview</a>
+                <a href="#timeline" class="block px-3 py-2 text-[#1e3a5f] hover:text-[#c9a227]">Timeline</a>
+                <a href="#structure" class="block px-3 py-2 text-[#1e3a5f] hover:text-[#c9a227]">Structure</a>
+                <a href="#impact" class="block px-3 py-2 text-[#1e3a5f] hover:text-[#c9a227]">Impact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <!-- Parallax Background -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-gradient-to-b from-[#1e3a5f]/20 via-transparent to-[#f5f1e8]"></div>
+            <div class="parallax-bg absolute inset-0 opacity-30" data-speed="0.5">
+                <div class="absolute top-20 left-10 w-96 h-96 bg-[#c9a227]/20 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-20 right-10 w-[500px] h-[500px] bg-[#1e3a5f]/20 rounded-full blur-3xl"></div>
+            </div>
+        </div>
+        
+        <div class="relative z-10 max-w-6xl mx-auto px-4 text-center">
+            <div class="mb-6 inline-block">
+                <span class="text-[#c9a227] text-sm uppercase tracking-[0.3em] font-semibold">Established 1789</span>
+            </div>
+            <h1 class="display text-5xl md:text-7xl lg:text-8xl font-bold text-[#1e3a5f] mb-6 leading-tight">
+                The Evolution of<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#1e3a5f] to-[#c9a227]">Governance</span>
+            </h1>
+            <p class="serif text-xl md:text-2xl text-[#1e3a5f]/80 max-w-2xl mx-auto mb-12 italic leading-relaxed">
+                Tracing the metamorphosis of national institutions through centuries of change, crisis, and renewal
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button onclick="scrollToTimeline()" class="group relative px-8 py-4 bg-[#1e3a5f] text-[#f5f1e8] overflow-hidden rounded-sm">
+                    <span class="relative z-10 flex items-center gap-2 uppercase tracking-widest text-sm font-semibold">
+                        Explore Timeline
+                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </span>
+                    <div class="absolute inset-0 bg-[#c9a227] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                </button>
+                <button onclick="scrollToStructure()" class="px-8 py-4 border-2 border-[#1e3a5f] text-[#1e3a5f] hover:bg-[#1e3a5f] hover:text-[#f5f1e8] transition-all duration-300 uppercase tracking-widest text-sm font-semibold rounded-sm">
+                    View Structure
+                </button>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-[#1e3a5f]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+    </section>
+
+    <!-- Overview Stats -->
+    <section id="overview" class="py-20 bg-[#1e3a5f] text-[#f5f1e8] relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute inset-0" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px);"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="stat-item">
+                    <div class="display text-4xl md:text-5xl font-bold text-[#c9a227] mb-2" data-target="235">0</div>
+                    <div class="text-sm uppercase tracking-widest opacity-80">Years of History</div>
+                </div>
+                <div class="stat-item">
+                    <div class="display text-4xl md:text-5xl font-bold text-[#c9a227] mb-2" data-target="47">0</div>
+                    <div class="text-sm uppercase tracking-widest opacity-80">Major Reforms</div>
+                </div>
+                <div class="stat-item">
+                    <div class="display text-4xl md:text-5xl font-bold text-[#c9a227] mb-2" data-target="12">0</div>
+                    <div class="text-sm uppercase tracking-widest opacity-80">Constitutional Eras</div>
+                </div>
+                <div class="stat-item">
+                    <div class="display text-4xl md:text-5xl font-bold text-[#c9a227] mb-2" data-target="186">0</div>
+                    <div class="text-sm uppercase tracking-widest opacity-80">Departments Evolved</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Timeline -->
+    <section id="timeline" class="py-32 relative bg-[#f5f1e8]">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-20">
+                <span class="text-[#c9a227] text-sm uppercase tracking-[0.3em] font-semibold mb-4 block">Chronological Journey</span>
+                <h2 class="display text-4xl md:text-6xl font-bold text-[#1e3a5f] mb-6">Institutional Timeline</h2>
+                <p class="serif text-lg text-[#1e3a5f]/70 max-w-2xl mx-auto">Scroll through the epochs that shaped our modern governance structure</p>
+            </div>
+
+            <div class="relative">
+                <!-- Central Line -->
+                <div class="timeline-line"></div>
+
+                <!-- Era 1: Foundation -->
+                <div class="era-card relative mb-32 md:mb-48">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="md:text-right md:pr-12">
+                            <div class="inline-block px-4 py-1 bg-[#1e3a5f] text-[#c9a227] text-sm font-bold rounded-full mb-4">1789 — 1820</div>
+                            <h3 class="display text-3xl font-bold text-[#1e3a5f] mb-4">The Foundation Era</h3>
+                            <p class="text-[#1e3a5f]/80 mb-4 leading-relaxed">The establishment of core governmental frameworks following revolutionary transformation. Three branches of government defined, initial cabinet positions created.</p>
+                            <div class="flex flex-wrap gap-2 md:justify-end">
+                                <span class="px-3 py-1 bg-[#1e3a5f]/10 text-[#1e3a5f] text-xs rounded-full">Constitution Ratified</span>
+                                <span class="px-3 py-1 bg-[#1e3a5f]/10 text-[#1e3a5f] text-xs rounded-full">First Cabinet</span>
+                                <span class="px-3 py-1 bg-[#1e3a5f]/10 text-[#1e3a5f] text-xs rounded-full">Federal System</span>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div class="institution-node bg-white p-6 rounded-lg shadow-xl border-l-4 border-[#c9a227]">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-[#1e3a5f] rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-[#1e3a5f] mb-1">Initial Structure</h4>
+                                        <p class="text-sm text-gray-600">5 Executive Departments • 26 Senators • 65 Representatives</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Connection dot -->
+                            <div class="absolute top-1/2 -left-4 md:-left-8 w-4 h-4 bg-[#c9a227] rounded-full border-4 border-[#f5f1e8] transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Era 2: Expansion -->
+                <div class="era-card relative mb-32 md:mb-48">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="md:order-2 md:text-left md:pl-12">
+                            <div class="inline-block px-4 py-1 bg-[#8b4513] text-[#f5f1e8] text-sm font-bold rounded-full mb-4">1820 — 1865</div>
+                            <h3 class="display text-3xl font-bold text-[#1e3a5f] mb-4">The Expansion Era</h3>
+                            <p class="text-[#1e3a5f]/80 mb-4 leading-relaxed">Westward expansion drives institutional growth. New territories require administrative oversight, leading to the creation of territorial offices and expansion of federal reach.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-[#8b4513]/10 text-[#8b4513] text-xs rounded-full">Territorial Management</span>
+                                <span class="px-3 py-1 bg-[#8b4513]/10 text-[#8b4513] text-xs rounded-full">Land Grants</span>
+                                <span class="px-3 py-1 bg-[#8b4513]/10 text-[#8b4513] text-xs rounded-full">Infrastructure</span>
+                            </div>
+                        </div>
+                        <div class="relative md:order-1">
+                            <div class="institution-node bg-white p-6 rounded-lg shadow-xl border-l-4 border-[#8b4513]">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-[#8b4513] rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-[#f5f1e8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-[#1e3a5f] mb-1">Geographic Expansion</h4>
+                                        <p class="text-sm text-gray-600">+12 New Departments • 30 New Agencies • Federal Marshals System</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 -right-4 md:-right-8 w-4 h-4 bg-[#8b4513] rounded-full border-4 border-[#f5f1e8] transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Era 3: Reconstruction -->
+                <div class="era-card relative mb-32 md:mb-48">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="md:text-right md:pr-12">
+                            <div class="inline-block px-4 py-1 bg-[#1e3a5f] text-[#c9a227] text-sm font-bold rounded-full mb-4">1865 — 1900</div>
+                            <h3 class="display text-3xl font-bold text-[#1e3a5f] mb-4">The Reconstruction Era</h3>
+                            <p class="text-[#1e3a5f]/80 mb-4 leading-relaxed">Post-conflict institutional rebuilding. Civil service reforms replace patronage with meritocracy. Regulatory bodies emerge to manage industrialization.</p>
+                            <div class="flex flex-wrap gap-2 md:justify-end">
+                                <span class="px-3 py-1 bg-[#1e3a5f]/10 text-[#1e3a5f] text-xs rounded-full">Civil Service Act</span>
+                                <span class="px-3 py-1 bg-[#1e3a5f]/10 text-[#1e3a5f] text-xs rounded-full">Regulatory Bodies</span>
+                                <span class="px-3 py-1 bg-[#1e3a5f]/10 text-[#1e3a5f] text-xs rounded-full">Merit System</span>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div class="institution-node bg-white p-6 rounded-lg shadow-xl border-l-4 border-[#1e3a5f]">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-[#c9a227] rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-[#1e3a5f]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-[#1e3a5f] mb-1">Professionalization</h4>
+                                        <p class="text-sm text-gray-600">Pendleton Act • Interstate Commerce Commission • 50% Merit-based Hiring</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 -left-4 md:-left-8 w-4 h-4 bg-[#1e3a5f] rounded-full border-4 border-[#f5f1e8] transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Era 4: New Deal -->
+                <div class="era-card relative mb-32 md:mb-48">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="md:order-2 md:text-left md:pl-12">
+                            <div class="inline-block px-4 py-1 bg-[#c9a227] text-[#1e3a5f] text-sm font-bold rounded-full mb-4">1900 — 1945</div>
+                            <h3 class="display text-3xl font-bold text-[#1e3a5f] mb-4">The Progressive Era</h3>
+                            <p class="text-[#1e3a5f]/80 mb-4 leading-relaxed">Response to industrial complexity and economic crisis. Unprecedented expansion of federal authority. Social welfare institutions established.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-[#c9a227]/20 text-[#1e3a5f] text-xs rounded-full">New Deal Agencies</span>
+                                <span class="px-3 py-1 bg-[#c9a227]/20 text-[#1e3a5f] text-xs rounded-full">Social Security</span>
+                                <span class="px-3 py-1 bg-[#c9a227]/20 text-[#1e3a5f] text-xs rounded-full">Federal Reserve</span>
+                            </div>
+                        </div>
+                        <div class="relative md:order-1">
+                            <div class="institution-node bg-white p-6 rounded-lg shadow-xl border-l-4 border-[#c9a227]">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-[#c9a227] rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-[#1e3a5f]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-[#1e3a5f] mb-1">Welfare State</h4>
+                                        <p class="text-sm text-gray-600">+69 New Agencies • Social Security Administration • SEC • FCC</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 -right-4 md:-right-8 w-4 h-4 bg-[#c9a227] rounded-full border-4 border-[#f5f1e8] transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Era 5: Modern -->
+                <div class="era-card relative mb-32 md:mb-48">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="md:text-right md:pr-12">
+                            <div class="inline-block px-4 py-1 bg-[#1e3a5f] text-[#c9a227] text-sm font-bold rounded-full mb-4">1945 — 2000</div>
+                            <h3 class="display text-3xl font-bold text-[#1e3a5f] mb-4">The Modern Era</h3>
+                            <p class="text-[#1e3a5f]/80 mb-4 leading-relaxed">Cold War bureaucracy and deregulation movements. Information age transforms institutional operations. Devolution and reinvention initiatives.</p>
+                            <div class="flex flex-wrap gap-2 md:justify-end">
+                                <span class="px-3 py-1 bg-[#1e3a5f]/10 text-[#1e3a5f] text-xs rounded-full">Department of Defense</span>
+                                <span class="px-3 py-1 bg-[#1e3a5f]/10 text-[#1e3a5f] text-xs rounded-full">NASA</span>
+                                <span class="px-3 py-1 bg-[#1e3a5f]/10 text-[#1e3a5f] text-xs rounded-full">Reinvention</span>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div class="institution-node bg-white p-6 rounded-lg shadow-xl border-l-4 border-[#1e3a5f]">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-[#1e3a5f] rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-[#1e3a5f] mb-1">Technological Integration</h4>
+                                        <p class="text-sm text-gray-600">Computerization • 15 Cabinet Departments • Regulatory Reform</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 -left-4 md:-left-8 w-4 h-4 bg-[#1e3a5f] rounded-full border-4 border-[#f5f1e8] transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Era 6: Digital -->
+                <div class="era-card relative">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="md:order-2 md:text-left md:pl-12">
+                            <div class="inline-block px-4 py-1 bg-gradient-to-r from-[#c9a227] to-[#1e3a5f] text-white text-sm font-bold rounded-full mb-4">2000 — Present</div>
+                            <h3 class="display text-3xl font-bold text-[#1e3a5f] mb-4">The Digital Era</h3>
+                            <p class="text-[#1e3a5f]/80 mb-4 leading-relaxed">Digital transformation, open government initiatives, and adaptive governance. Homeland security restructuring and data-driven policy making.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-gradient-to-r from-[#c9a227]/20 to-[#1e3a5f]/20 text-[#1e3a5f] text-xs rounded-full">Digital Services</span>
+                                <span class="px-3 py-1 bg-gradient-to-r from-[#c9a227]/20 to-[#1e3a5f]/20 text-[#1e3a5f] text-xs rounded-full">Open Data</span>
+                                <span class="px-3 py-1 bg-gradient-to-r from-[#c9a227]/20 to-[#1e3a5f]/20 text-[#1e3a5f] text-xs rounded-full">AI Integration</span>
+                            </div>
+                        </div>
+                        <div class="relative md:order-1">
+                            <div class="institution-node bg-white p-6 rounded-lg shadow-xl border-l-4 border-[#c9a227]">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-[#c9a227] to-[#1e3a5f] rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-[#1e3a5f] mb-1">Digital Governance</h4>
+                                        <p class="text-sm text-gray-600">Cloud Infrastructure • 2.1M Federal Employees • 430 Departments</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 -right-4 md:-right-8 w-4 h-4 bg-[#c9a227] rounded-full border-4 border-[#f5f1e8] transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Organizational Structure Visualization -->
+    <section id="structure" class="py-32 bg-[#1e3a5f] text-[#f5f1e8] relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <span class="text-[#c9a227] text-sm uppercase tracking-[0.3em] font-semibold mb-4 block">Current Architecture</span>
+                <h2 class="display text-4xl md:text-6xl font-bold mb-6">Institutional Structure</h2>
+                <p class="serif text-lg text-[#f5f1e8]/70 max-w-2xl mx-auto">Interactive visualization of the current governmental framework</p>
+            </div>
+
+            <!-- Interactive Structure Diagram -->
+            <div class="relative bg-[#f5f1e8]/5 rounded-2xl p-8 md:p-12 backdrop-blur-sm border border-[#c9a227]/20">
+                <!-- SVG Connections -->
+                <svg class="connection-svg" id="structure-svg"></svg>
+                
+                <!-- Executive Branch -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="md:col-span-3 flex justify-center">
+                        <div class="institution-node bg-[#c9a227] text-[#1e3a5f] px-8 py-4 rounded-lg font-bold text-lg shadow-2xl cursor-pointer hover:scale-105 transition-transform" onclick="highlightBranch('executive')">
+                            Executive Branch
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cabinet Level -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="cabinet-row">
+                    <div class="institution-node bg-[#f5f1e8]/10 border border-[#c9a227]/30 p-4 rounded text-center text-sm hover:bg-[#c9a227]/20 transition-colors cursor-pointer" data-branch="executive">State</div>
+                    <div class="institution-node bg-[#f5f1e8]/10 border border-[#c9a227]/30 p-4 rounded text-center text-sm hover:bg-[#c9a227]/20 transition-colors cursor-pointer" data-branch="executive">Treasury</div>
+                    <div class="institution-node bg-[#f5f1e8]/10 border border-[#c9a227]/30 p-4 rounded text-center text-sm hover:bg-[#c9a227]/20 transition-colors cursor-pointer" data-branch="executive">Defense</div>
+                    <div class="institution-node bg-[#f5f1e8]/10 border border-[#c9a227]/30 p-4 rounded text-center text-sm hover:bg-[#c9a227]/20 transition-colors cursor-pointer" data-branch="executive">Justice</div>
+                </div>
+
+                <!-- Legislative & Judicial -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                    <div class="text-center">
+                        <div class="institution-node inline-block bg-[#8b4513] text-[#f5f1e8] px-8 py-4 rounded-lg font-bold text-lg shadow-2xl mb-4 cursor-pointer hover:scale-105 transition-transform" onclick="highlightBranch('legislative')">
+                            Legislative Branch
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-4" id="legislative-sub">
+                            <div class="institution-node bg-[#f5f1e8]/10 border border-[#8b4513]/30 p-3 rounded text-sm" data-branch="legislative">Senate</div>
+                            <div class="institution-node bg-[#f5f1e8]/10 border border-[#8b4513]/30 p-3 rounded text-sm" data-branch="legislative">House</div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="institution-node inline-block bg-[#1e3a5f] border-2 border-[#c9a227] text-[#f5f1e8] px-8 py-4 rounded-lg font-bold text-lg shadow-2xl mb-4 cursor-pointer hover:scale-105 transition-transform" onclick="highlightBranch('judicial')">
+                            Judicial Branch
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 mt-4" id="judicial-sub">
+                            <div class="institution-node bg-[#f5f1e8]/10 border border-[#c9a227]/30 p-3 rounded text-sm" data-branch="judicial">Supreme Court</div>
+                            <div class="institution-node bg-[#f5f1e8]/10 border border-[#c9a227]/30 p-3 rounded text-sm" data-branch="judicial">Federal Courts</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Independent Agencies -->
+                <div class="mt-12 pt-8 border-t border-[#f5f1e8]/10">
+                    <h4 class="text-center text-[#c9a227] uppercase tracking-widest text-sm mb-4">Independent Agencies & Commissions</h4>
+                    <div class="flex flex-wrap justify-center gap-2" id="agencies">
+                        <span class="institution-node px-3 py-1 bg-[#f5f1e8]/5 rounded-full text-xs border border-[#f5f1e8]/20 hover:border-[#c9a227] transition-colors cursor-pointer">EPA</span>
+                        <span class="institution-node px-3 py-1 bg-[#f5f1e8]/5 rounded-full text-xs border border-[#f5f1e8]/20 hover:border-[#c9a227] transition-colors cursor-pointer">NASA</span>
+                        <span class="institution-node px-3 py-1 bg-[#f5f1e8]/5 rounded-full text-xs border border-[#f5f1e8]/20 hover:border-[#c9a227] transition-colors cursor-pointer">FCC</span>
+                        <span class="institution-node px-3 py-1 bg-[#f5f1e8]/5 rounded-full text-xs border border-[#f5f1e8]/20 hover:border-[#c9a227] transition-colors cursor-pointer">SEC</span>
+                        <span class="institution-node px-3 py-1 bg-[#f5f1e8]/5 rounded-full text-xs border border-[#f5f1e8]/20 hover:border-[#c9a227] transition-colors cursor-pointer">CIA</span>
+                        <span class="institution-node px-3 py-1 bg-[#f5f1e8]/5 rounded-full text-xs border border-[#f5f1e8]/20 hover:border-[#c9a227] transition-colors cursor-pointer">FBI</span>
+                        <span class="institution-node px-3 py-1 bg-[#f5f1e8]/5 rounded-full text-xs border border-[#f5f1e8]/20 hover:border-[#c9a227] transition-colors cursor-pointer">NSA</span>
+                        <span class="institution-node px-3 py-1 bg-[#f5f1e8]/5 rounded-full text-xs border border-[#f5f1e8]/20 hover:border-[#c9a227] transition-colors cursor-pointer">USPS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Visualization -->
+    <section id="impact" class="py-32 bg-[#f5f1e8] relative">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="text-[#c9a227] text-sm uppercase tracking-[0.3em] font-semibold mb-4 block">Quantified Impact</span>
+                <h2 class="display text-4xl md:text-6xl font-bold text-[#1e3a5f] mb-6">Institutional Footprint</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Employment Growth Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-[#1e3a5f]/10">
+                    <h3 class="font-bold text-[#1e3a5f] mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        Employment Growth
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">1816</span>
+                            <div class="flex-1 mx-4 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-[#1e3a5f] w-[5%]"></div>
+                            </div>
+                            <span class="font-semibold text-[#1e3a5f]">4,837</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">1861</span>
+                            <div class="flex-1 mx-4 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-[#1e3a5f] w-[15%]"></div>
+                            </div>
+                            <span class="font-semibold text-[#1e3a5f]">36,672</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">1945</span>
+                            <div class="flex-1 mx-4 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-[#8b4513] w-[60%]"></div>
+                            </div>
+                            <span class="font-semibold text-[#1e3a5f]">3.3M</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">2024</span>
+                            <div class="flex-1 mx-4 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-[#c9a227] w-[75%]"></div>
+                            </div>
+                            <span class="font-semibold text-[#1e3a5f]">2.1M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Evolution -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-[#1e3a5f]/10">
+                    <h3 class="font-bold text-[#1e3a5f] mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Budget Growth
+                    </h3>
+                    <div class="relative h-48 flex items-end justify-between gap-2">
+                        <div class="flex-1 flex flex-col items-center gap-2">
+                            <div class="w-full bg-[#1e3a5f]/20 rounded-t hover:bg-[#1e3a5f] transition-colors relative group" style="height: 10%">
+                                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[#1e3a5f] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">$0.5M</div>
+                            </div>
+                            <span class="text-xs text-gray-500">1800</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center gap-2">
+                            <div class="w-full bg-[#1e3a5f]/40 rounded-t hover:bg-[#1e3a5f] transition-colors relative group" style="height: 25%">
+                                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[#1e3a5f] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">$5M</div>
+                            </div>
+                            <span class="text-xs text-gray-500">1860</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center gap-2">
+                            <div class="w-full bg-[#8b4513] rounded-t hover:bg-[#8b4513]/80 transition-colors relative group" style="height: 60%">
+                                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[#8b4513] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">$92B</div>
+                            </div>
+                            <span class="text-xs text-gray-500">1945</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center gap-2">
+                            <div class="w-full bg-[#c9a227] rounded-t hover:bg-[#c9a227]/80 transition-colors relative group" style="height: 100%">
+                                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[#c9a227] text-[#1e3a5f] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">$6.8T</div>
+                            </div>
+                            <span class="text-xs text-gray-500">2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agency Proliferation -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-[#1e3a5f]/10">
+                    <h3 class="font-bold text-[#1e3a5f] mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        Agency Growth
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-[#f5f1e8] rounded-lg">
+                            <span class="text-sm font-medium text-[#1e3a5f]">Cabinet Departments</span>
+                            <span class="display text-2xl font-bold text-[#c9a227]">15</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-[#f5f1e8] rounded-lg">
+                            <span class="text-sm font-medium text-[#1e3a5f]">Independent Agencies</span>
+                            <span class="display text-2xl font-bold text-[#c9a227]">70+</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-[#f5f1e8] rounded-lg">
+                            <span class="text-sm font-medium text-[#1e3a5f]">Commissions & Boards</span>
+                            <span class="display text-2xl font-bold text-[#c9a227]">200+</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-[#f5f1e8] rounded-lg">
+                            <span class="text-sm font-medium text-[#1e3a5f]">Federal Regulations</span>
+                            <span class="display text-2xl font-bold text-[#c9a227]">180K+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#0f172a] text-[#f5f1e8] py-12 border-t border-[#c9a227]/20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-[#c9a227] rounded-full flex items-center justify-center">
+                            <span class="text-[#1e3a5f] font-bold display">N</span>
+                        </div>
+                        <span class="display font-semibold tracking-wider">NATIONAL ARCHIVE</span>
+                    </div>
+                    <p class="text-sm text-gray-400">Preserving the evolution of governance for future generations.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-[#c9a227] uppercase text-xs tracking-widest">Explore</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-[#c9a227] transition-colors">Timeline</a></li>
+                        <li><a href="#" class="hover:text-[#c9a227] transition-colors">Documents</a></li>
+                        <li><a href="#" class="hover:text-[#c9a227] transition-colors">Biographies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-[#c9a227] uppercase text-xs tracking-widest">Resources</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-[#c9a227] transition-colors">Research Database</a></li>
+                        <li><a href="#" class="hover:text-[#c9a227] transition-colors">API Access</a></li>
+                        <li><a href="#" class="hover:text-[#c9a227] transition-colors">Educational Materials</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-[#c9a227] uppercase text-xs tracking-widest">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-8 h-8 bg-[#f5f1e8]/10 rounded-full flex items-center justify-center hover:bg-[#c9a227] hover:text-[#1e3a5f] transition-all">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                        </a>
+                        <a href="#" class="w-8 h-8 bg-[#f5f1e8]/10 rounded-full flex items-center justify-center hover:bg-[#c9a227] hover:text-[#1e3a5f] transition-all">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-[#f5f1e8]/10 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; 2024 National Institutional Archive. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Smooth scroll functions
+        function scrollToTimeline() {
+            document.getElementById('timeline').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function scrollToStructure() {
+            document.getElementById('structure').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Animate stats counter if it's a stat item
+                    if (entry.target.classList.contains('stat-item')) {
+                        const counter = entry.target.querySelector('[data-target]');
+                        if (counter && !counter.classList.contains('counted')) {
+                            animateCounter(counter);
+                            counter.classList.add('counted');
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all era cards and stat items
+        document.querySelectorAll('.era-card, .stat-item').forEach((el) => observer.observe(el));
+
+        // Counter animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+
+        // Parallax effect for hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.parallax-bg');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+            
+            // Navbar background
+            const navbar = document.getElementById('navbar');
+            if (scrolled > 100) {
+                navbar.classList.add('shadow-md');
+            } else {
+                navbar.classList.remove('shadow-md');
+            }
+        });
+
+        // Structure diagram interactions
+        function highlightBranch(branch) {
+            // Reset all
+            document.querySelectorAll('[data-branch]').forEach(el => {
+                el.style.opacity = '0.3';
+                el.style.transform = 'scale(0.95)';
+            });
+            
+            // Highlight selected
+            document.querySelectorAll(`[data-branch="${branch}"]`).forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'scale(1.05)';
+                el.style.borderColor = '#c9a227';
+            });
+            
+            // Reset after 3 seconds
+            setTimeout(() => {
+                document.querySelectorAll('[data-branch]').forEach(el => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'scale(1)';
+                    el.style.borderColor = '';
+                });
+            }, 3000);
+        }
+
+        // Draw connection lines in structure diagram
+        function drawConnections() {
+            const svg = document.getElementById('structure-svg');
+            if (!svg) return;
+            
+            const container = svg.parentElement;
+            const rect = container.getBoundingClientRect();
+            svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+            
+            // Simple line drawing between elements could be added here
+            // For now, using CSS borders and layout for visual connections
+        }
+
+        window.addEventListener('resize', drawConnections);
+        window.addEventListener('load', drawConnections);
+
+        // Text reveal animation for hero
+        function revealText() {
+            const title = document.querySelector('h1');
+            if (!title) return;
+            
+            const text = title.textContent;
+            title.innerHTML = '';
+            
+            // Split into words and chars
+            const words = text.split(' ');
+            words.forEach((word, wordIndex) => {
+                const wordSpan = document.createElement('span');
+                wordSpan.style.display = 'inline-block';
+                wordSpan.style.marginRight = '0.3em';
+                
+                word.split('').forEach((char, charIndex) => {
+                    const span = document.createElement('span');
+                    span.textContent = char;
+                    span.className = 'char';
+                    span.style.animationDelay = `${(wordIndex * 0.1) + (charIndex * 0.03)}s`;
+                    wordSpan.appendChild(span);
+                });
+                
+                title.appendChild(wordSpan);
+            });
+        }
+
+        // Initialize text reveal on load
+        window.addEventListener('load', revealText);
+    </script>
+</body>
+</html>

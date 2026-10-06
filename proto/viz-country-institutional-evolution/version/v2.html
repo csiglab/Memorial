@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Zealand: Institutional Timeline</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Dashboard Palette - Professional Dark Mode */
+            --bg-body: #0f172a;       /* Slate 900 */
+            --bg-card: #1e293b;       /* Slate 800 */
+            --bg-element: #334155;    /* Slate 700 */
+            
+            --text-main: #f8fafc;     /* Slate 50 */
+            --text-muted: #94a3b8;    /* Slate 400 */
+            
+            --border-subtle: #334155;
+            --accent-primary: #38bdf8; /* Sky 400 */
+            
+            /* Data Colors - Distinct but harmonious */
+            --color-creation: #fb7185;   /* Rose */
+            --color-diffusion: #34d399;  /* Emerald */
+            --color-coordination: #818cf8; /* Indigo */
+            --color-importation: #fbbf24; /* Amber */
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* App-like behavior */
+        }
+
+        /* --- Top Navigation Bar --- */
+        header {
+            height: 64px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+        .brand-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--accent-primary), #2563eb);
+            border-radius: 6px;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-body);
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+        
+        .tab-btn.active {
+            background: var(--bg-element);
+            color: var(--text-main);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+        /* --- Main Layout --- */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 320px; /* Chart Area | Sidebar */
+            overflow: hidden;
+        }
+
+        /* --- Chart Section --- */
+        #chart-section {
+            position: relative;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .chart-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* D3 Elements */
+        .grid-line { stroke: var(--border-subtle); stroke-width: 1; stroke-dasharray: 4; opacity: 0.5; }
+        .axis-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--text-muted); }
+        .role-label { font-size: 12px; font-weight: 600; fill: var(--text-main); text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        /* Data Points & Paths */
+        .connector {
+            fill: none;
+            stroke-width: 2;
+            opacity: 0.2;
+            transition: opacity 0.3s;
+        }
+        
+        .node-group { cursor: pointer; }
+        .node-circle {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            stroke: var(--bg-body);
+            stroke-width: 2px;
+        }
+        .node-group:hover .node-circle {
+            r: 10;
+            stroke: white;
+            stroke-width: 3px;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+        }
+        
+        /* Time Cursor */
+        .cursor-line {
+            stroke: var(--text-main);
+            stroke-width: 1;
+            stroke-dasharray: 4;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* --- Timeline Control Bar --- */
+        .timeline-bar {
+            height: 60px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 20px;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+
+        .btn-icon {
+            background: var(--bg-element);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .btn-icon:hover { background: #475569; }
+        .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .year-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--accent-primary);
+            width: 80px;
+            text-align: right;
+        }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type=range]:focus { outline: none; }
+        
+        /* Track */
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-element);
+            border-radius: 2px;
+        }
+        /* Thumb */
+        input[type=range]::-webkit-slider-thumb {
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--text-main);
+            -webkit-appearance: none;
+            margin-top: -6px;
+            box-shadow: 0 0 0 4px var(--bg-card), 0 0 0 6px var(--accent-primary);
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+
+        /* --- Sidebar Inspector --- */
+        aside {
+            background: var(--bg-card);
+            border-left: 1px solid var(--border-subtle);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .inspector-card {
+            background: var(--bg-body);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .inspector-content { text-align: left; width: 100%; animation: fadeIn 0.3s ease; }
+        .inspector-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px; display: block; }
+        .inspector-value { font-size: 24px; font-weight: 600; color: var(--text-main); margin: 0 0 16px 0; }
+        .inspector-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+        .meta-box span { display: block; }
+        .meta-title { font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
+        .meta-data { font-family: 'JetBrains Mono'; font-size: 13px; color: var(--text-main); }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #0f172a; /* Dark text on light badge */
+            background: #334155;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            main { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+            aside { display: none; } /* Hide details on small mobile for simplicity */
+            .filter-tabs { display: none; } /* Simplify for mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar: Branding & Filters -->
+    <header>
+        <div class="brand">
+            <div class="brand-icon"></div>
+            <h1> New Zealand · Institutional Timeline: An Event Representation</h1>
+        </div>
+
+        <div class="filter-tabs" id="filters">
+            <!-- Generated by JS -->
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main>
+        <!-- Visualization Area -->
+        <section id="chart-section">
+            <div class="chart-wrapper" id="chart-container">
+                <!-- D3 SVG mounts here -->
+            </div>
+        </section>
+
+        <!-- Right Sidebar: Details -->
+        <aside>
+            <h3 style="margin:0; font-size:14px; text-transform:uppercase; color:var(--text-muted);">Inspector</h3>
+            
+            <div id="inspector-panel" class="inspector-card">
+                <p>Hover over a data point to inspect details.</p>
+            </div>
+
+            <div style="margin-top:auto; font-size:12px; color:var(--text-muted); line-height:1.5;">
+                <strong>Context:</strong><br>
+                Visualizing the horizontal evolution of actor roles within the system architecture from 1880 to present.
+            </div>
+        </aside>
+    </main>
+
+    <!-- Bottom Bar: Timeline Controls -->
+    <div class="timeline-bar">
+        <button id="play-btn" class="btn-icon" title="Play/Pause">
+            <!-- Play Icon -->
+            <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <!-- Pause Icon (hidden by default) -->
+            <svg id="icon-pause" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        
+        <div style="flex:1; display:flex; align-items:center; gap:15px;">
+            <span style="font-size:12px; color:var(--text-muted); font-family:'JetBrains Mono'">1880</span>
+            <input type="range" id="year-slider" min="1880" max="2025" value="2025" step="1">
+            <span style="font-size:12px; color:var(--text-muted); font-family:'JetBrains Mono'">2025</span>
+        </div>
+
+        <div class="year-display" id="year-display">2025</div>
+    </div>
+
+    <script>
+        // --- 1. Data & State ---
+        const roles = ["Creation", "Diffusion", "Coordination", "Importation"];
+        
+        const roleConfig = {
+            "Creation": { color: "var(--color-creation)", hex: "#fb7185" },
+            "Diffusion": { color: "var(--color-diffusion)", hex: "#34d399" },
+            "Coordination": { color: "var(--color-coordination)", hex: "#818cf8" },
+            "Importation": { color: "var(--color-importation)", hex: "#fbbf24" }
+        };
+
+        const events = [
+            { year: 1890, actor: "Dept. of Agriculture", role: "Importation" },
+            { year: 1890, actor: "Universities", role: "Creation" },
+            { year: 1890, actor: "Private Firms", role: "Importation" },
+            { year: 1950, actor: "DSIR", role: "Creation" },
+            { year: 1950, actor: "Dairy Board", role: "Diffusion" },
+            { year: 1950, actor: "Dept. of Agriculture", role: "Coordination" },
+            { year: 1985, actor: "Environmental NGOs", role: "Coordination" },
+            { year: 2015, actor: "Fonterra", role: "Creation" },
+            { year: 2015, actor: "Universities", role: "Creation" }
+        ];
+
+        const state = {
+            activeFilters: new Set(roles),
+            currentYear: 2025,
+            isPlaying: false,
+            animId: null
+        };
+
+        // --- 2. D3 Setup ---
+        const container = document.getElementById('chart-container');
+        let width, height;
+
+        // Margins adjusted for labels
+        const margin = { top: 40, right: 20, bottom: 40, left: 120 };
+
+        const svg = d3.select("#chart-container").append("svg")
+            .attr("preserveAspectRatio", "xMidYMid meet");
+
+        // Layers
+        const gridLayer = svg.append("g").attr("class", "grid-layer");
+        const dataLayer = svg.append("g").attr("class", "data-layer");
+        const cursorLayer = svg.append("g").attr("class", "cursor-layer");
+
+        // Scales
+        const x = d3.scaleLinear().domain([1880, 2025]);
+        const y = d3.scalePoint().domain(roles).padding(0.4);
+
+        // --- 3. Render Functions ---
+
+        function resize() {
+            const rect = container.getBoundingClientRect();
+            width = rect.width - margin.left - margin.right;
+            height = rect.height - margin.top - margin.bottom;
+
+            svg.attr("viewBox", `0 0 ${rect.width} ${rect.height}`);
+            
+            x.range([0, width]);
+            y.range([0, height]);
+
+            drawGrid();
+            drawData();
+            drawCursor();
+        }
+
+        function drawGrid() {
+            // Horizontal Lines
+            const lines = gridLayer.selectAll(".grid-line")
+                .data(roles);
+            
+            lines.enter().append("line")
+                .attr("class", "grid-line")
+                .merge(lines)
+                .attr("x1", 0).attr("x2", width)
+                .attr("y1", d => y(d)).attr("y2", d => y(d));
+            
+            // Role Labels
+            const labels = gridLayer.selectAll(".role-label")
+                .data(roles);
+            
+            labels.enter().append("text")
+                .attr("class", "role-label")
+                .merge(labels)
+                .attr("x", -15)
+                .attr("y", d => y(d))
+                .attr("text-anchor", "end")
+                .attr("dominant-baseline", "middle")
+                .text(d => d);
+
+            // X Axis
+            const xAxis = d3.axisBottom(x).ticks(width > 600 ? 10 : 5).tickFormat(d3.format("d"));
+            const gX = gridLayer.selectAll(".x-axis").data([null]);
+            
+            gX.enter().append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(0, ${height})`)
+                .merge(gX)
+                .call(xAxis)
+                .call(g => g.select(".domain").remove())
+                .selectAll("text").attr("class", "axis-text");
+        }
+
+        function drawData() {
+            const filteredEvents = events.filter(d => state.activeFilters.has(d.role));
+            
+            // 1. Connectors (Bezier curves)
+            // Group by role, sort by year, create paths
+            const pathsData = [];
+            roles.forEach(role => {
+                const roleEvents = filteredEvents
+                    .filter(d => d.role === role)
+                    .sort((a,b) => a.year - b.year);
+                
+                for(let i=0; i < roleEvents.length - 1; i++) {
+                    pathsData.push({
+                        source: roleEvents[i],
+                        target: roleEvents[i+1],
+                        role: role
+                    });
+                }
+            });
+
+            const paths = dataLayer.selectAll(".connector")
+                .data(pathsData, d => `${d.source.actor}-${d.target.actor}`);
+
+            const lineGen = d3.line()
+                .x(d => x(d.year))
+                .y(d => y(d.role))
+                .curve(d3.curveMonotoneX);
+
+            paths.enter().append("path")
+                .attr("class", "connector")
+                .merge(paths)
+                .attr("d", d => lineGen([d.source, d.target]))
+                .attr("stroke", d => roleConfig[d.role].color)
+                // Only show path if both points are "active" (<= currentYear)
+                .style("opacity", d => (d.source.year <= state.currentYear && d.target.year <= state.currentYear) ? 0.4 : 0);
+
+            paths.exit().remove();
+
+            // 2. Nodes
+            const nodes = dataLayer.selectAll(".node-group")
+                .data(filteredEvents, d => d.actor + d.year);
+
+            const nodeEnter = nodes.enter().append("g")
+                .attr("class", "node-group")
+                .attr("transform", d => `translate(${x(d.year)}, ${y(d.role)})`);
+
+            nodeEnter.append("circle")
+                .attr("class", "node-circle")
+                .attr("r", 6);
+
+            const nodeMerge = nodeEnter.merge(nodes);
+
+            // Position
+            nodeMerge.transition().duration(400).ease(d3.easeCubicOut)
+                .attr("transform", d => `translate(${x(d.year)}, ${y(d.role)})`);
+
+            // Opacity based on timeline
+            nodeMerge.style("opacity", d => d.year <= state.currentYear ? 1 : 0.1);
+
+            // Color & Hover
+            nodeMerge.select("circle")
+                .attr("fill", d => roleConfig[d.role].color);
+
+            nodeMerge
+                .on("mouseenter", (event, d) => updateInspector(d))
+                .on("mouseleave", () => clearInspector());
+
+            nodes.exit().remove();
+        }
+
+        function drawCursor() {
+            const cursorData = [state.currentYear];
+            const cursor = cursorLayer.selectAll(".cursor-line")
+                .data(cursorData);
+
+            cursor.enter().append("line")
+                .attr("class", "cursor-line")
+                .merge(cursor)
+                .attr("x1", d => x(d))
+                .attr("x2", d => x(d))
+                .attr("y1", 0)
+                .attr("y2", height);
+        }
+
+        // --- 4. UI Interactions ---
+
+        // Filters
+        const filterContainer = document.getElementById('filters');
+        roles.forEach(role => {
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn active';
+            btn.innerHTML = `<span class="dot" style="background:${roleConfig[role].color}"></span>${role}`;
+            btn.onclick = () => toggleFilter(role, btn);
+            filterContainer.appendChild(btn);
+        });
+
+        function toggleFilter(role, btn) {
+            if (state.activeFilters.has(role)) {
+                state.activeFilters.delete(role);
+                btn.classList.remove('active');
+            } else {
+                state.activeFilters.add(role);
+                btn.classList.add('active');
+            }
+            drawData();
+        }
+
+        // Inspector Panel
+        const inspector = document.getElementById('inspector-panel');
+        function updateInspector(d) {
+            const config = roleConfig[d.role];
+            inspector.innerHTML = `
+                <div class="inspector-content">
+                    <span class="inspector-label">Actor</span>
+                    <h2 class="inspector-value" style="font-size:20px">${d.actor}</h2>
+                    
+                    <div class="inspector-label">Role</div>
+                    <div><span class="badge" style="background:${config.color}">${d.role}</span></div>
+
+                    <div class="inspector-meta">
+                        <div class="meta-box">
+                            <span class="meta-title">Year</span>
+                            <span class="meta-data">${d.year}</span>
+                        </div>
+                        <div class="meta-box">
+                            <span class="meta-title">Status</span>
+                            <span class="meta-data" style="color:var(--color-diffusion)">Active</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function clearInspector() {
+            // Keep the last value or reset? Let's reset for clarity, or keep the last viewed. 
+            // UX decision: Keep last viewed is better for memory, but reset implies "nothing selected".
+            // Let's leave it as is to allow reading while moving mouse away slightly.
+        }
+
+        // Timeline Controls
+        const slider = document.getElementById('year-slider');
+        const yearDisplay = document.getElementById('year-display');
+        const playBtn = document.getElementById('play-btn');
+        const iconPlay = document.getElementById('icon-play');
+        const iconPause = document.getElementById('icon-pause');
+
+        function updateTimeline(year) {
+            state.currentYear = parseInt(year);
+            slider.value = state.currentYear;
+            yearDisplay.innerText = state.currentYear;
+            drawData();
+            drawCursor();
+        }
+
+        slider.addEventListener('input', (e) => {
+            if(state.isPlaying) togglePlay();
+            updateTimeline(e.target.value);
+        });
+
+        function togglePlay() {
+            state.isPlaying = !state.isPlaying;
+            
+            if (state.isPlaying) {
+                iconPlay.style.display = 'none';
+                iconPause.style.display = 'block';
+                
+                // Loop
+                const loop = () => {
+                    if (!state.isPlaying) return;
+                    
+                    let nextYear = state.currentYear + 1;
+                    if (nextYear > 2025) {
+                        nextYear = 1880; // Loop back or stop? Let's loop for "Screensaver" mode
+                        // Or simply stop:
+                        // togglePlay(); 
+                        // return; 
+                    }
+                    
+                    updateTimeline(nextYear);
+                    // Speed control: requestAnimationFrame vs setTimeout. 
+                    // setTimeout is easier to control speed (years per second).
+                    setTimeout(() => requestAnimationFrame(loop), 100); 
+                };
+                loop();
+            } else {
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
+            }
+        }
+
+        playBtn.addEventListener('click', togglePlay);
+
+        // Init
+        window.addEventListener('resize', resize);
+        resize(); // Trigger initial draw
+
+    </script>
+</body>
+</html>

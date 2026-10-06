@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> New Zealand: Institutional Timeline</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --accent-color: #3b82f6;
+            
+            /* Role Colors */
+            --color-creation: #E63946;
+            --color-diffusion: #2A9D8F;
+            --color-coordination: #457B9D;
+            --color-importation: #F4A261;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- Header --- */
+        header {
+            width: 100%;
+            background: var(--card-bg);
+            padding: 20px 40px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .header-content h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .header-content p {
+            margin: 5px 0 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- Main Layout --- */
+        main {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+            width: 95%;
+            max-width: 1200px;
+            margin-top: 24px;
+            margin-bottom: 40px;
+        }
+
+        /* --- Chart Card --- */
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-container {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* --- Controls & Sidebar --- */
+        aside {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .panel h3 {
+            margin-top: 0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* Filter Controls */
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 6px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .checkbox-wrapper:hover {
+            background-color: var(--bg-color);
+        }
+
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid var(--border-color);
+            position: relative;
+        }
+
+        input[type="checkbox"] { display: none; }
+        input[type="checkbox"]:checked + .checkbox-custom {
+            background-color: currentColor;
+            border-color: currentColor;
+        }
+        input[type="checkbox"]:checked + .checkbox-custom::after {
+            content: '✔';
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            left: 2px;
+            top: -1px;
+        }
+
+        /* Role specific colors for filters */
+        .filter-creation { color: var(--color-creation); }
+        .filter-diffusion { color: var(--color-diffusion); }
+        .filter-coordination { color: var(--color-coordination); }
+        .filter-importation { color: var(--color-importation); }
+
+        /* Info Panel */
+        #info-content {
+            min-height: 100px;
+        }
+        .info-empty {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+        .info-data {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .info-role-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+        .info-year {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--text-muted);
+        }
+        .info-actor {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+
+        /* --- Timeline Slider --- */
+        .timeline-control {
+            grid-column: 1 / -1;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px 40px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .play-btn {
+            background: none;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .play-btn:hover {
+            border-color: var(--text-main);
+            background: var(--bg-color);
+        }
+        .play-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: var(--text-main);
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .current-year-display {
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+            font-size: 1.2rem;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        /* --- D3 Elements Styling --- */
+        .grid-line { stroke: #f1f5f9; stroke-width: 1; stroke-dasharray: 4; }
+        .axis-text { font-size: 12px; fill: var(--text-muted); font-weight: 500; }
+        .role-label { font-size: 13px; font-weight: 600; fill: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .data-point {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .data-point:hover circle {
+            stroke: var(--text-main);
+            stroke-width: 3px;
+            r: 10;
+        }
+        .data-point circle {
+            stroke: white;
+            stroke-width: 2px;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            main { grid-template-columns: 1fr; }
+            aside { flex-direction: row; flex-wrap: wrap; }
+            .panel { flex: 1; min-width: 250px; }
+            .timeline-control { padding: 20px; flex-direction: column; align-items: stretch; }
+            .play-btn { align-self: flex-start; }
+            .current-year-display { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1> New Zealand</h1>
+            <p> Institutional Timeline: An Event Representation</p>
+        </div>
+    </header>
+
+    <main>
+        <!-- Chart Area -->
+        <section class="chart-card">
+            <div class="chart-container" id="chart-container">
+                <!-- SVG injected by D3 -->
+            </div>
+        </section>
+
+        <!-- Sidebar Controls -->
+        <aside>
+            <!-- Filters -->
+            <div class="panel">
+                <h3>Dimensions Filter</h3>
+                <div class="filter-group">
+                    <label class="checkbox-wrapper filter-creation">
+                        <input type="checkbox" checked value="Creation">
+                        <div class="checkbox-custom"></div>
+                        Creation
+                    </label>
+                    <label class="checkbox-wrapper filter-diffusion">
+                        <input type="checkbox" checked value="Diffusion">
+                        <div class="checkbox-custom"></div>
+                        Diffusion
+                    </label>
+                    <label class="checkbox-wrapper filter-coordination">
+                        <input type="checkbox" checked value="Coordination">
+                        <div class="checkbox-custom"></div>
+                        Coordination
+                    </label>
+                    <label class="checkbox-wrapper filter-importation">
+                        <input type="checkbox" checked value="Importation">
+                        <div class="checkbox-custom"></div>
+                        Importation
+                    </label>
+                </div>
+            </div>
+
+            <!-- Details Panel -->
+            <div class="panel">
+                <h3>Event Details</h3>
+                <div id="info-content">
+                    <div class="info-empty">Hover over an event to see details.</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Timeline Scrubber -->
+        <section class="timeline-control">
+            <button id="play-btn" class="play-btn" aria-label="Play Timeline">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <div style="flex-grow: 1; display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">1880</span>
+                <input type="range" id="year-slider" min="1880" max="2025" step="1" value="2025">
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">2025</span>
+            </div>
+            <div class="current-year-display" id="year-display">2025</div>
+        </section>
+    </main>
+
+    <script>
+        // --- 1. Data Configuration ---
+        const roles = ["Creation", "Diffusion", "Coordination", "Importation"];
+        
+        const roleColors = {
+            "Creation": "#E63946", 
+            "Diffusion": "#2A9D8F", 
+            "Coordination": "#457B9D", 
+            "Importation": "#F4A261"
+        };
+
+        // Extended data for better visualization (kept user's original + slight consistency expansion)
+        const events = [
+            { year: 1890, actor: "Dept. of Agriculture", role: "Importation" },
+            { year: 1890, actor: "Universities", role: "Creation" },
+            { year: 1890, actor: "Private Firms", role: "Importation" },
+            { year: 1950, actor: "DSIR", role: "Creation" },
+            { year: 1950, actor: "Dairy Board", role: "Diffusion" },
+            { year: 1950, actor: "Dept. of Agriculture", role: "Coordination" },
+            { year: 1985, actor: "Environmental NGOs", role: "Coordination" },
+            { year: 2015, actor: "Fonterra", role: "Creation" },
+            { year: 2015, actor: "Universities", role: "Creation" }
+        ];
+
+        // --- 2. State Management ---
+        const state = {
+            filters: new Set(roles), // Active roles
+            currentYear: 2025,
+            isPlaying: false,
+            playInterval: null
+        };
+
+        // --- 3. Dimensions & Scales ---
+        const container = document.getElementById('chart-container');
+        const margin = { top: 40, right: 40, bottom: 40, left: 140 };
+        // We use aspect ratio to handle responsiveness
+        const width = 800;
+        const height = 400;
+
+        const x = d3.scaleLinear().domain([1880, 2025]).range([0, width - margin.left - margin.right]);
+        const y = d3.scalePoint().domain(roles).range([0, height - margin.top - margin.bottom]).padding(0.5);
+
+        // --- 4. SVG Setup ---
+        const svg = d3.select("#chart-container")
+            .append("svg")
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Definitions for gradients/filters
+        const defs = svg.append("defs");
+        // Add a subtle drop shadow filter
+        const filter = defs.append("filter")
+            .attr("id", "drop-shadow")
+            .attr("height", "130%");
+        filter.append("feGaussianBlur")
+            .attr("in", "SourceAlpha")
+            .attr("stdDeviation", 2);
+        filter.append("feOffset")
+            .attr("dx", 1)
+            .attr("dy", 2)
+            .attr("result", "offsetblur");
+        const feMerge = filter.append("feMerge");
+        feMerge.append("feMergeNode");
+        feMerge.append("feMergeNode").attr("in", "SourceGraphic");
+
+        // --- 5. Draw Static Elements (Grid & Axes) ---
+        
+        // Horizontal Role Lines & Labels
+        const roleGroups = svg.selectAll(".role-group")
+            .data(roles)
+            .enter().append("g")
+            .attr("class", "role-group");
+
+        roleGroups.append("line")
+            .attr("x1", 0).attr("x2", width - margin.left - margin.right)
+            .attr("y1", d => y(d)).attr("y2", d => y(d))
+            .attr("class", "grid-line")
+            .style("opacity", 0.5);
+
+        roleGroups.append("text")
+            .attr("x", -15)
+            .attr("y", d => y(d))
+            .attr("class", "role-label")
+            .attr("text-anchor", "end")
+            .attr("dominant-baseline", "middle")
+            .text(d => d);
+
+        // X Axis
+        const xAxis = d3.axisBottom(x).ticks(12).tickFormat(d3.format("d")).tickSize(-height + margin.top + margin.bottom);
+        const gX = svg.append("g")
+            .attr("transform", `translate(0, ${height - margin.top - margin.bottom})`)
+            .call(xAxis);
+        
+        // Style grid lines created by axis
+        gX.selectAll(".tick line").attr("class", "grid-line").style("stroke-opacity", 0.2);
+        gX.select(".domain").remove();
+        gX.selectAll("text").attr("class", "axis-text");
+
+        // Year Indicator Line (Vertical)
+        const yearLine = svg.append("line")
+            .attr("class", "year-indicator")
+            .attr("y1", -20)
+            .attr("y2", height - margin.top - margin.bottom + 20)
+            .attr("stroke", "var(--text-main)")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "5,3")
+            .style("opacity", 0); // Hidden by default until moved
+
+        // --- 6. Render Data Points ---
+        
+        function renderChart() {
+            // Filter data based on active roles AND year
+            const activeData = events.filter(d => state.filters.has(d.role) && d.year <= state.currentYear);
+
+            // Join
+            const points = svg.selectAll(".data-point")
+                .data(activeData, d => `${d.actor}-${d.year}`); // Key function
+
+            // Enter
+            const enter = points.enter().append("g")
+                .attr("class", "data-point")
+                .attr("transform", d => `translate(${x(d.year)}, ${y(d.role)})`)
+                .style("opacity", 0);
+
+            enter.append("circle")
+                .attr("r", 0) // Animate radius
+                .attr("fill", d => roleColors[d.role]);
+
+            // Enter + Update
+            const merged = enter.merge(points);
+
+            // Animate changes
+            merged.transition().duration(600).ease(d3.easeCubicOut)
+                .attr("transform", d => `translate(${x(d.year)}, ${y(d.role)})`)
+                .style("opacity", 1);
+            
+            merged.select("circle")
+                .transition().duration(600)
+                .attr("r", 7) // Target radius
+                .attr("fill", d => roleColors[d.role]);
+
+            // Exit
+            points.exit()
+                .transition().duration(300)
+                .style("opacity", 0)
+                .attr("transform", d => `translate(${x(d.year)}, ${y(d.role) + 10})`)
+                .remove();
+
+            // Update Year Indicator
+            yearLine
+                .attr("x1", x(state.currentYear))
+                .attr("x2", x(state.currentYear))
+                .style("opacity", state.currentYear < 2025 ? 1 : 0);
+
+            // Update Text Display
+            document.getElementById('year-display').textContent = state.currentYear;
+            document.getElementById('year-slider').value = state.currentYear;
+        }
+
+        // --- 7. Interaction Logic ---
+
+        // Hover Logic (Tooltip replacement)
+        const infoContent = document.getElementById('info-content');
+
+        svg.selectAll(".data-point") // Note: This selects existing elements, need to re-bind on render? 
+        // Better approach: Use delegation or attach to merged group in render function?
+        // For simplicity in vanilla D3, we add listeners during enter, and they persist for merge if we don't recreate group.
+        // However, simplest way for dynamic data:
+        
+        function attachListeners() {
+            // Using event delegation on the SVG container is robust for dynamic elements
+            container.addEventListener('mouseover', (e) => {
+                const group = e.target.closest('.data-point');
+                if (!group) return;
+                
+                // Find data bound to this element
+                const datum = d3.select(group).datum();
+                showInfo(datum);
+            });
+
+            container.addEventListener('click', (e) => {
+                const group = e.target.closest('.data-point');
+                if (!group) return;
+                const datum = d3.select(group).datum();
+                showInfo(datum);
+            });
+
+            container.addEventListener('mouseout', (e) => {
+                // Optional: clear info on mouse out? 
+                // Let's keep the last selected info visible for better UX, or clear if desired.
+                // Leaving it persistent is often better for accessibility.
+            });
+        }
+
+        function showInfo(d) {
+            const color = roleColors[d.role];
+            infoContent.innerHTML = `
+                <div class="info-data">
+                    <div class="info-year">${d.year}</div>
+                    <div class="info-actor">${d.actor}</div>
+                    <span class="info-role-badge" style="background-color: ${color}">${d.role}</span>
+                </div>
+            `;
+        }
+
+        // Filter Checkboxes
+        document.querySelectorAll('.filter-group input').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                if(e.target.checked) state.filters.add(e.target.value);
+                else state.filters.delete(e.target.value);
+                renderChart();
+            });
+        });
+
+        // Slider Control
+        const slider = document.getElementById('year-slider');
+        slider.addEventListener('input', (e) => {
+            state.currentYear = +e.target.value;
+            // Pause if user interacts manually
+            if(state.isPlaying) togglePlay();
+            renderChart();
+        });
+
+        // Play Button Logic
+        const playBtn = document.getElementById('play-btn');
+        
+        function togglePlay() {
+            state.isPlaying = !state.isPlaying;
+            const icon = state.isPlaying 
+                ? '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' // Pause icon
+                : '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'; // Play icon
+            
+            playBtn.innerHTML = icon;
+            playBtn.style.background = state.isPlaying ? 'var(--text-main)' : 'none';
+            playBtn.style.color = state.isPlaying ? '#fff' : 'var(--text-main)';
+
+            if (state.isPlaying) {
+                if (state.currentYear >= 2025) state.currentYear = 1880; // Restart if at end
+                state.playInterval = setInterval(() => {
+                    state.currentYear += 1;
+                    if (state.currentYear > 2025) {
+                        togglePlay(); // Stop at end
+                        state.currentYear = 2025;
+                    }
+                    renderChart();
+                }, 50); // Speed of animation (ms per year)
+            } else {
+                clearInterval(state.playInterval);
+            }
+        }
+
+        playBtn.addEventListener('click', togglePlay);
+
+        // --- 8. Initialization ---
+        attachListeners();
+        renderChart(); // Initial Render
+
+        // Handle Resize (D3 viewBox handles scaling, but good to know)
+        window.addEventListener('resize', renderChart);
+
+    </script>
+</body>
+</html>

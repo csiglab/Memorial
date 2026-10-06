@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Zealand Tecnogenesis: Actor Mapping 1800-Present</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <style>
+        :root {
+            --color-creation: #059669; /* Emerald 600 */
+            --color-diffusion: #0891b2; /* Cyan 600 */
+            --color-coordination: #7c3aed; /* Violet 600 */
+            --color-importation: #ea580c; /* Orange 600 */
+            --color-decay: #dc2626; /* Red 600 */
+            --bg-paper: #fafaf9; /* Stone 50 */
+            --text-ink: #292524; /* Stone 800 */
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-ink);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .serif {
+            font-family: 'Crimson Text', serif;
+        }
+
+        /* Background Grid Pattern */
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Scroll Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-creation), var(--color-coordination));
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Actor Card Styles */
+        .actor-card {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .actor-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .actor-card:hover {
+            transform: translateY(-4px) translateX(4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .actor-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Function Colors */
+        .actor-card.creation { border-left-color: var(--color-creation); }
+        .actor-card.diffusion { border-left-color: var(--color-diffusion); }
+        .actor-card.coordination { border-left-color: var(--color-coordination); }
+        .actor-card.importation { border-left-color: var(--color-importation); }
+        .actor-card.decay { border-left-color: var(--color-decay); }
+
+        /* Badges */
+        .function-badge {
+            font-size: 0.65rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+        }
+
+        /* Timeline Styles */
+        .phase-marker {
+            background: linear-gradient(135deg, #1c1917 0%, #44403c 100%);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .timeline-connector {
+            position: absolute;
+            left: 3rem; /* Adjust based on phase marker size */
+            top: 5rem;
+            bottom: -2rem;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--color-creation), var(--color-decay));
+            z-index: 0;
+            opacity: 0.2;
+        }
+
+        /* Table Styles */
+        .table-row-hover:hover td {
+            background-color: #fafaf9;
+        }
+
+        /* Animations */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body class="grid-bg selection:bg-stone-200 selection:text-stone-900">
+
+    <!-- Scroll Progress -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 w-full backdrop-blur-md bg-stone-50/90 border-b border-stone-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-8 h-8 bg-stone-800 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                        NZ
+                    </div>
+                    <span class="font-bold text-lg tracking-tight text-stone-900 hidden sm:block">Tecnogenesis Archive</span>
+                </div>
+                <div class="flex gap-6 text-sm font-medium text-stone-600 overflow-x-auto no-scrollbar">
+                    <button onclick="scrollToSection('phases')" class="hover:text-stone-900 transition whitespace-nowrap">Phases</button>
+                    <button onclick="scrollToSection('cross')" class="hover:text-stone-900 transition whitespace-nowrap">Categories</button>
+                    <button onclick="scrollToSection('reform')" class="hover:text-stone-900 transition whitespace-nowrap">2025 Reform</button>
+                    <button onclick="scrollToSection('matrix')" class="hover:text-stone-900 transition whitespace-nowrap">Matrix</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-[90vh] flex flex-col items-center justify-center px-6 pt-20 pb-12 overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-100/50 rounded-full blur-3xl mix-blend-multiply animate-blob"></div>
+        <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-cyan-100/50 rounded-full blur-3xl mix-blend-multiply animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-1/3 w-96 h-96 bg-violet-100/50 rounded-full blur-3xl mix-blend-multiply animate-blob animation-delay-4000"></div>
+
+        <div class="relative z-10 max-w-5xl mx-auto text-center">
+            <div class="mb-6 inline-block opacity-0 animate-fade-in-down" style="animation-delay: 0.1s;">
+                <span class="function-badge bg-stone-200 text-stone-700 border border-stone-300 shadow-sm">Structured Historical Mapping</span>
+            </div>
+            
+            <h1 class="serif text-5xl md:text-7xl font-bold mb-6 leading-tight text-stone-900 tracking-tight opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+                The Actor Set Shaping<br>
+                <span class="italic text-stone-500">New Zealand's Technical Space</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-stone-600 max-w-3xl mx-auto mb-12 leading-relaxed font-light opacity-0 animate-fade-in-up" style="animation-delay: 0.3s;">
+                A comprehensive mapping of actor classes that structurally altered the technical-productive space since 1800, organized by historical phase and functional role.
+            </p>
+            
+            <!-- Legend -->
+            <div class="flex flex-wrap justify-center gap-4 mb-16 opacity-0 animate-fade-in-up" style="animation-delay: 0.4s;">
+                <div class="flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm border border-stone-100">
+                    <div class="w-3 h-3 rounded-full bg-emerald-600 ring-2 ring-emerald-100"></div>
+                    <span class="text-sm font-medium text-stone-700">Creation</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm border border-stone-100">
+                    <div class="w-3 h-3 rounded-full bg-cyan-600 ring-2 ring-cyan-100"></div>
+                    <span class="text-sm font-medium text-stone-700">Diffusion</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm border border-stone-100">
+                    <div class="w-3 h-3 rounded-full bg-violet-600 ring-2 ring-violet-100"></div>
+                    <span class="text-sm font-medium text-stone-700">Coordination</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm border border-stone-100">
+                    <div class="w-3 h-3 rounded-full bg-orange-600 ring-2 ring-orange-100"></div>
+                    <span class="text-sm font-medium text-stone-700">Importation</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm border border-stone-100">
+                    <div class="w-3 h-3 rounded-full bg-red-600 ring-2 ring-red-100"></div>
+                    <span class="text-sm font-medium text-stone-700">Decay/Drain</span>
+                </div>
+            </div>
+
+            <div class="opacity-0 animate-fade-in" style="animation-delay: 0.8s;">
+                <a href="#phases" class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white border border-stone-200 text-stone-400 shadow-sm hover:text-stone-800 hover:border-stone-400 transition-all duration-300 hover:scale-110">
+                    <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32 relative" id="phases">
+
+        <!-- Phase I: 1800-1840 -->
+        <section class="mb-24 fade-in-section relative">
+            <div class="absolute left-[3.6rem] top-24 bottom-[-3rem] w-0.5 bg-gradient-to-b from-stone-300 to-transparent"></div>
+            
+            <div class="flex items-start gap-8 mb-8 relative z-10">
+                <div class="phase-marker w-24 h-24 rounded-2xl flex items-center justify-center text-white font-serif text-4xl shadow-xl shrink-0 border-4 border-stone-50">
+                    I
+                </div>
+                <div class="pt-4">
+                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                        <span class="text-sm font-bold text-stone-400 tracking-widest uppercase">1800 — 1840</span>
+                        <span class="px-2 py-1 bg-stone-200 text-stone-600 text-xs rounded font-bold tracking-wide">Pre-Colonial</span>
+                    </div>
+                    <h2 class="serif text-3xl md:text-4xl font-bold mb-2 text-stone-900">Pre-Colonial & Early Contact</h2>
+                    <p class="text-stone-600 text-lg font-light">Indigenous ecological optimization & initial disruption</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 ml-32 relative z-10">
+                <div class="actor-card creation bg-white p-6 rounded-xl shadow-sm border border-stone-200 hover:border-emerald-100">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Māori Iwi & Hapū</h3>
+                        <span class="function-badge text-emerald-800 bg-emerald-100 border border-emerald-200">Creation</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-4 font-medium uppercase tracking-wide">Primary technique generators</p>
+                    <ul class="space-y-3 text-sm text-stone-700">
+                        <li class="flex items-start gap-3">
+                            <span class="text-emerald-600 mt-0.5">•</span>
+                            <span>Kūmara cultivation systems & soil adaptation</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-emerald-600 mt-0.5">•</span>
+                            <span>Terracing and storage engineering (pā)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-emerald-600 mt-0.5">•</span>
+                            <span>Forest management & maritime navigation</span>
+                        </li>
+                    </ul>
+                    <div class="mt-5 pt-4 border-t border-stone-100 text-xs text-stone-400 italic">
+                        Constituted the entire technical-production system
+                    </div>
+                </div>
+
+                <div class="actor-card importation bg-white p-6 rounded-xl shadow-sm border border-stone-200 hover:border-orange-100">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Early Traders & Whalers</h3>
+                        <span class="function-badge text-orange-800 bg-orange-100 border border-orange-200">Importation</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-4 font-medium uppercase tracking-wide">Technique introducers</p>
+                    <ul class="space-y-3 text-sm text-stone-700">
+                        <li class="flex items-start gap-3">
+                            <span class="text-orange-600 mt-0.5">•</span>
+                            <span>Metal tools & firearms</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-orange-600 mt-0.5">•</span>
+                            <span>Maritime trade techniques</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-orange-600 mt-0.5">•</span>
+                            <span>Ship repair skills</span>
+                        </li>
+                    </ul>
+                    <div class="mt-5 pt-4 border-t border-stone-100 text-xs text-stone-400 italic">
+                        Initial transfer was shallow but highly disruptive
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase II: 1840-1890 -->
+        <section class="mb-24 fade-in-section relative">
+            <div class="flex items-start gap-8 mb-8 relative z-10">
+                <div class="phase-marker w-24 h-24 rounded-2xl flex items-center justify-center text-white font-serif text-4xl shadow-xl shrink-0 border-4 border-stone-50">
+                    II
+                </div>
+                <div class="pt-4">
+                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                        <span class="text-sm font-bold text-stone-400 tracking-widest uppercase">1840 — 1890</span>
+                        <span class="px-2 py-1 bg-stone-200 text-stone-600 text-xs rounded font-bold tracking-wide">Settler-Colonial</span>
+                    </div>
+                    <h2 class="serif text-3xl md:text-4xl font-bold mb-2 text-stone-900">Settler-Colonial Extraction</h2>
+                    <p class="text-stone-600 text-lg font-light">Pastoral transformation of the landscape</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 ml-32 relative z-10">
+                <div class="actor-card coordination bg-white p-6 rounded-xl shadow-sm border border-stone-200 lg:col-span-2">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">British Colonial Administration</h3>
+                        <span class="function-badge text-violet-800 bg-violet-100 border border-violet-200">Coordination</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-4 font-medium uppercase tracking-wide">Institutional architect</p>
+                    <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-3 text-sm text-stone-700">
+                        <li class="flex items-start gap-2">
+                            <span class="text-violet-600 mt-1">•</span>
+                            <span>Land titling systems & legal property regimes</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-violet-600 mt-1">•</span>
+                            <span>Infrastructure planning (Roads/Rail)</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-violet-600 mt-1">•</span>
+                            <span>Trade policy integration with Britain</span>
+                        </li>
+                    </ul>
+                    <div class="mt-4 pt-4 border-t border-stone-100 text-xs text-stone-500 italic">
+                        Altered the coordination layer of the technical system
+                    </div>
+                </div>
+
+                <div class="actor-card diffusion bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Settler Farmers</h3>
+                        <span class="function-badge text-cyan-800 bg-cyan-100 border border-cyan-200">Diffusion</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-4 font-medium uppercase tracking-wide">Technique adopters</p>
+                    <ul class="space-y-2 text-sm text-stone-700">
+                        <li class="flex items-start gap-2"><span class="text-cyan-600 mt-1">•</span><span>Sheep farming & wool production</span></li>
+                        <li class="flex items-start gap-2"><span class="text-cyan-600 mt-1">•</span><span>Grassland conversion</span></li>
+                    </ul>
+                </div>
+
+                <div class="actor-card importation bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">British Capital</h3>
+                        <span class="function-badge text-orange-800 bg-orange-100 border border-orange-200">Importation</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-4 font-medium uppercase tracking-wide">External integrators</p>
+                    <ul class="space-y-2 text-sm text-stone-700">
+                        <li class="flex items-start gap-2"><span class="text-orange-600 mt-1">•</span><span>Export financing</span></li>
+                        <li class="flex items-start gap-2"><span class="text-orange-600 mt-1">•</span><span>Maritime logistics</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase III: 1890-1930 -->
+        <section class="mb-24 fade-in-section relative">
+            <div class="flex items-start gap-8 mb-8 relative z-10">
+                <div class="phase-marker w-24 h-24 rounded-2xl flex items-center justify-center text-white font-serif text-4xl shadow-xl shrink-0 border-4 border-emerald-100 bg-emerald-700">
+                    III
+                </div>
+                <div class="pt-4">
+                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                        <span class="text-sm font-bold text-stone-400 tracking-widest uppercase">1890 — 1930</span>
+                        <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded font-bold tracking-wide">Refrigeration Era</span>
+                    </div>
+                    <h2 class="serif text-3xl md:text-4xl font-bold mb-2 text-stone-900">Refrigeration & Export Integration</h2>
+                    <p class="text-stone-600 text-lg font-light">Biological-industrial coupling</p>
+                </div>
+            </div>
+
+            <div class="ml-32 mb-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-center gap-4 max-w-3xl animate-pulse-once">
+                <div class="w-3 h-3 bg-emerald-600 rounded-full shadow-sm"></div>
+                <span class="text-emerald-900 font-medium text-sm">Critical Transition: The 1882 refrigerated shipment to Britain transformed NZ's economic trajectory.</span>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 ml-32 relative z-10">
+                <div class="actor-card creation bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Refrigeration Engineers</h3>
+                        <span class="function-badge text-emerald-800 bg-emerald-100 border border-emerald-200">Creation</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-4 font-medium uppercase tracking-wide">Technical breakthrough enablers</p>
+                    <ul class="space-y-2 text-sm text-stone-700">
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-600 mt-1">•</span>
+                            <span>Shipping companies & cold storage engineers</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-600 mt-1">•</span>
+                            <span>Meat processing firms innovation</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="actor-card coordination bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Cooperative Dairy Companies</h3>
+                        <span class="function-badge text-violet-800 bg-violet-100 border border-violet-200">Coordination</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-4 font-medium uppercase tracking-wide">Organizational innovation</p>
+                    <ul class="space-y-2 text-sm text-stone-700">
+                        <li class="flex items-start gap-2">
+                            <span class="text-violet-600 mt-1">•</span>
+                            <span>Farmer-owned cooperatives</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-violet-600 mt-1">•</span>
+                            <span>Standardization systems</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="actor-card creation bg-white p-6 rounded-xl shadow-sm border border-stone-200 md:col-span-2">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Department of Agriculture (1892)</h3>
+                        <span class="function-badge text-emerald-800 bg-emerald-100 border border-emerald-200">Creation</span>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-1">
+                            <p class="text-sm text-stone-500 mb-4 font-medium uppercase tracking-wide">Public research + extension</p>
+                            <ul class="space-y-2 text-sm text-stone-700">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-600 mt-1">•</span>
+                                    <span>Veterinary science & soil research</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-600 mt-1">•</span>
+                                    <span>Breeding improvement & field trials</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="flex-1 bg-stone-50 p-3 rounded border border-stone-100 text-xs text-stone-500 italic flex items-center">
+                            State begins systematic technical governance
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase IV: 1930-1970 -->
+        <section class="mb-24 fade-in-section relative">
+            <div class="flex items-start gap-8 mb-8 relative z-10">
+                <div class="phase-marker w-24 h-24 rounded-2xl flex items-center justify-center text-white font-serif text-4xl shadow-xl shrink-0 border-4 border-stone-50">
+                    IV
+                </div>
+                <div class="pt-4">
+                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                        <span class="text-sm font-bold text-stone-400 tracking-widest uppercase">1930 — 1970</span>
+                        <span class="px-2 py-1 bg-stone-200 text-stone-600 text-xs rounded font-bold tracking-wide">Scientific Intensification</span>
+                    </div>
+                    <h2 class="serif text-3xl md:text-4xl font-bold mb-2 text-stone-900">State-Led Scientific Intensification</h2>
+                    <p class="text-stone-600 text-lg font-light">Institutionalized agriscience</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 ml-32 relative z-10">
+                <div class="actor-card creation bg-white p-6 rounded-xl shadow-sm border border-stone-200 md:col-span-2">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">DSIR (1926)</h3>
+                        <span class="function-badge text-emerald-800 bg-emerald-100 border border-emerald-200">Creation</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-3 font-medium uppercase tracking-wide">Department of Scientific and Industrial Research</p>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <div class="bg-stone-50 p-2 rounded text-xs text-stone-600 text-center border border-stone-100">Grasslands</div>
+                        <div class="bg-stone-50 p-2 rounded text-xs text-stone-600 text-center border border-stone-100">Genetics</div>
+                        <div class="bg-stone-50 p-2 rounded text-xs text-stone-600 text-center border border-stone-100">Soil Chemistry</div>
+                        <div class="bg-stone-50 p-2 rounded text-xs text-stone-600 text-center border border-stone-100">Industrial Chem</div>
+                        <div class="bg-stone-50 p-2 rounded text-xs text-stone-600 text-center border border-stone-100">Geothermal</div>
+                    </div>
+                </div>
+
+                <div class="actor-card coordination bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Producer Boards</h3>
+                        <span class="function-badge text-violet-800 bg-violet-100 border border-violet-200">Coordination</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-3 font-medium uppercase tracking-wide">Dairy Board, Meat Board</p>
+                    <ul class="space-y-2 text-sm text-stone-700">
+                        <li class="flex items-start gap-2"><span class="text-violet-600 mt-1">•</span><span>Export marketing & quality standards</span></li>
+                        <li class="flex items-start gap-2"><span class="text-violet-600 mt-1">•</span><span>Research funding via levies</span></li>
+                    </ul>
+                </div>
+
+                <div class="actor-card coordination bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">State-Owned Enterprises</h3>
+                        <span class="function-badge text-violet-800 bg-violet-100 border border-violet-200">Coordination</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="px-2 py-1 bg-stone-100 text-stone-700 text-xs rounded">Rail</span>
+                        <span class="px-2 py-1 bg-stone-100 text-stone-700 text-xs rounded">Electricity</span>
+                        <span class="px-2 py-1 bg-stone-100 text-stone-700 text-xs rounded">Telecom</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase V: 1970-1990 -->
+        <section class="mb-24 fade-in-section relative">
+            <div class="flex items-start gap-8 mb-8 relative z-10">
+                <div class="phase-marker w-24 h-24 rounded-2xl flex items-center justify-center text-white font-serif text-4xl shadow-xl shrink-0 border-4 border-stone-50">
+                    V
+                </div>
+                <div class="pt-4">
+                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                        <span class="text-sm font-bold text-stone-400 tracking-widest uppercase">1970 — 1990</span>
+                        <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded font-bold tracking-wide">Liberalization</span>
+                    </div>
+                    <h2 class="serif text-3xl md:text-4xl font-bold mb-2 text-stone-900">Crisis & Restructuring</h2>
+                    <p class="text-stone-600 text-lg font-light">Competitive recombination</p>
+                </div>
+            </div>
+
+            <div class="ml-32 mb-6 bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-center gap-4 max-w-3xl">
+                <div class="w-3 h-3 bg-orange-600 rounded-full shadow-sm animate-pulse"></div>
+                <span class="text-orange-900 font-medium text-sm">Critical Transition: 1984 reforms (Rogernomics) & DSIR → CRIs (1992)</span>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 ml-32 relative z-10">
+                <div class="actor-card coordination bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Reformist Leadership</h3>
+                        <span class="function-badge text-violet-800 bg-violet-100 border border-violet-200">Coordination</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-3 font-medium uppercase tracking-wide">System reconfiguration (1984)</p>
+                    <ul class="space-y-2 text-sm text-stone-700">
+                        <li class="flex items-start gap-2"><span class="text-violet-600 mt-1">•</span><span>Deregulation & removal of subsidies</span></li>
+                        <li class="flex items-start gap-2"><span class="text-violet-600 mt-1">•</span><span>Exposure to global competition</span></li>
+                    </ul>
+                </div>
+
+                <div class="actor-card creation bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Crown Research Institutes</h3>
+                        <span class="function-badge text-emerald-800 bg-emerald-100 border border-emerald-200">Creation</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-3 font-medium uppercase tracking-wide">Post-1992 semi-commercial bodies</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-emerald-50 text-emerald-800 text-xs rounded border border-emerald-100">AgResearch</span>
+                        <span class="px-2 py-1 bg-emerald-50 text-emerald-800 text-xs rounded border border-emerald-100">Plant & Food</span>
+                        <span class="px-2 py-1 bg-emerald-50 text-emerald-800 text-xs rounded border border-emerald-100">GNS Science</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase VI: 1990-2010 -->
+        <section class="mb-24 fade-in-section relative">
+            <div class="flex items-start gap-8 mb-8 relative z-10">
+                <div class="phase-marker w-24 h-24 rounded-2xl flex items-center justify-center text-white font-serif text-4xl shadow-xl shrink-0 border-4 border-stone-50">
+                    VI
+                </div>
+                <div class="pt-4">
+                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                        <span class="text-sm font-bold text-stone-400 tracking-widest uppercase">1990 — 2010</span>
+                        <span class="px-2 py-1 bg-cyan-100 text-cyan-700 text-xs rounded font-bold tracking-wide">Global Integration</span>
+                    </div>
+                    <h2 class="serif text-3xl md:text-4xl font-bold mb-2 text-stone-900">Global Integration & Agri-Tech</h2>
+                    <p class="text-stone-600 text-lg font-light">Digital-biological coupling</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 ml-32 relative z-10">
+                <div class="actor-card coordination bg-white p-6 rounded-xl shadow-sm border border-stone-200 md:col-span-2">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Fonterra (2001)</h3>
+                        <span class="function-badge text-violet-800 bg-violet-100 border border-violet-200">Coordination</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-3 font-medium uppercase tracking-wide">Mega-cooperative consolidation</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <ul class="space-y-2 text-sm text-stone-700">
+                                <li class="flex items-start gap-2"><span class="text-violet-600 mt-1">•</span><span>Global marketing</span></li>
+                                <li class="flex items-start gap-2"><span class="text-violet-600 mt-1">•</span><span>R&D funding</span></li>
+                            </ul>
+                        </div>
+                        <div class="text-xs text-stone-400 italic">
+                            Merger of NZ Dairy Group, Kiwi Co-op Dairies, and NZ Dairy Board.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actor-card creation bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">IT & Software</h3>
+                        <span class="function-badge text-emerald-800 bg-emerald-100 border border-emerald-200">Creation</span>
+                    </div>
+                    <ul class="space-y-2 text-sm text-stone-700">
+                        <li class="flex items-start gap-2"><span class="text-emerald-600 mt-1">•</span><span>Xero</span></li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-600 mt-1">•</span><span>Agri-data startups</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase VII: 2010-Present -->
+        <section class="mb-24 fade-in-section relative">
+            <div class="flex items-start gap-8 mb-8 relative z-10">
+                <div class="phase-marker w-24 h-24 rounded-2xl flex items-center justify-center text-stone-800 font-serif text-4xl shadow-xl shrink-0 border-4 border-stone-200 bg-white">
+                    VII
+                </div>
+                <div class="pt-4">
+                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                        <span class="text-sm font-bold text-stone-400 tracking-widest uppercase">2010 — Present</span>
+                        <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded font-bold tracking-wide">Environmental Constraint</span>
+                    </div>
+                    <h2 class="serif text-3xl md:text-4xl font-bold mb-2 text-stone-900">Constraint & Knowledge Intensification</h2>
+                    <p class="text-stone-600 text-lg font-light">Sustainability-constrained optimization</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 ml-32 relative z-10">
+                <div class="actor-card coordination bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Environmental Regulators</h3>
+                        <span class="function-badge text-violet-800 bg-violet-100 border border-violet-200">Coordination</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-3 font-medium uppercase tracking-wide">Reshaping technique</p>
+                    <ul class="space-y-2 text-sm text-stone-700">
+                        <li class="flex items-start gap-2"><span class="text-violet-600 mt-1">•</span><span>Nitrogen caps</span></li>
+                        <li class="flex items-start gap-2"><span class="text-violet-600 mt-1">•</span><span>Stock exclusion</span></li>
+                    </ul>
+                </div>
+
+                <div class="actor-card creation bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Rocket Lab</h3>
+                        <span class="function-badge text-emerald-800 bg-emerald-100 border border-emerald-200">Creation</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-3 font-medium uppercase tracking-wide">New frontier</p>
+                    <ul class="space-y-2 text-sm text-stone-700">
+                        <li class="flex items-start gap-2"><span class="text-emerald-600 mt-1">•</span><span>Aerospace (2006)</span></li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-600 mt-1">•</span><span>Advanced engineering</span></li>
+                    </ul>
+                </div>
+
+                <div class="actor-card decay bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-stone-800">Brain Drain</h3>
+                        <span class="function-badge text-red-800 bg-red-100 border border-red-200">Decay</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-3 font-medium uppercase tracking-wide">Capability loss</p>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="text-lg">🇦🇺</span>
+                        <span class="text-lg">🇺🇸</span>
+                        <span class="text-lg">🇬🇧</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cross-Cutting Categories (Moved from broken table position) -->
+        <section id="cross" class="mb-24 fade-in-section">
+            <div class="bg-stone-50 rounded-3xl p-8 md:p-12 border border-stone-200 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-stone-200/50 to-transparent rounded-bl-full -mr-16 -mt-16 pointer-events-none"></div>
+                
+                <h2 class="serif text-3xl md:text-4xl font-bold mb-12 text-center relative z-10">Cross-Cutting Actor Categories</h2>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+                    <!-- Card Template -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 hover:shadow-md transition duration-300 group">
+                        <div class="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-violet-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        </div>
+                        <h3 class="font-bold text-xl mb-3 text-stone-800">State Actors</h3>
+                        <ul class="text-sm text-stone-600 space-y-2 mb-4">
+                            <li>• Colonial Admin</li>
+                            <li>• Dept of Agriculture</li>
+                            <li>• DSIR → CRIs → PROs</li>
+                            <li>• Environmental Regulators</li>
+                        </ul>
+                        <div class="text-xs font-bold text-violet-600 uppercase tracking-wider">Coordination & Standards</div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 hover:shadow-md transition duration-300 group">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-xl mb-3 text-stone-800">Producer Cooperatives</h3>
+                        <ul class="text-sm text-stone-600 space-y-2 mb-4">
+                            <li>• Dairy Co-ops</li>
+                            <li>• Fonterra</li>
+                            <li>• Meat & Wool Boards</li>
+                        </ul>
+                        <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Innovation & Funding</div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 hover:shadow-md transition duration-300 group">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        </div>
+                        <h3 class="font-bold text-xl mb-3 text-stone-800">Universities & Research</h3>
+                        <ul class="text-sm text-stone-600 space-y-2 mb-4">
+                            <li>• Lincoln (1878)</li>
+                            <li>• Massey (1927)</li>
+                            <li>• CRIs / PROs</li>
+                        </ul>
+                        <div class="text-xs font-bold text-cyan-600 uppercase tracking-wider">Human Capital Formation</div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 hover:shadow-md transition duration-300 group">
+                        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-xl mb-3 text-stone-800">Foreign Actors</h3>
+                        <ul class="text-sm text-stone-600 space-y-2 mb-4">
+                            <li>• British Empire</li>
+                            <li>• Multinationals</li>
+                            <li>• CPTPP Agreements</li>
+                        </ul>
+                        <div class="text-xs font-bold text-orange-600 uppercase tracking-wider">External Technical Vectors</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Institutional Architecture: 2025 Reform -->
+        <section id="reform" class="mb-24 fade-in-section">
+            <div class="bg-white rounded-3xl p-8 md:p-12 shadow-lg border border-stone-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-stone-100 pb-6">
+                    <div>
+                        <h2 class="serif text-3xl font-bold text-stone-900">2025 Transformation</h2>
+                        <p class="text-stone-500 mt-2">Restructuring the Public Science System</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 bg-emerald-50 text-emerald-800 px-4 py-2 rounded-full text-sm font-bold border border-emerald-200">
+                        Current Event
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Before -->
+                    <div class="relative">
+                        <h3 class="text-sm font-bold text-stone-400 uppercase tracking-widest mb-4">Pre-July 2025</h3>
+                        <div class="bg-stone-50 rounded-xl p-6 border border-stone-200">
+                            <div class="text-4xl font-bold text-stone-300 mb-4">7</div>
+                            <div class="text-lg font-medium text-stone-800 mb-4">Crown Research Institutes</div>
+                            <div class="space-y-2 text-sm text-stone-600">
+                                <div class="flex justify-between border-b border-stone-200 pb-2">
+                                    <span>AgResearch</span><span class="text-stone-400">Pastoral</span>
+                                </div>
+                                <div class="flex justify-between border-b border-stone-200 pb-2">
+                                    <span>Plant & Food</span><span class="text-stone-400">Horticulture</span>
+                                </div>
+                                <div class="flex justify-between border-b border-stone-200 pb-2">
+                                    <span>Landcare</span><span class="text-stone-400">Environment</span>
+                                </div>
+                                <div class="flex justify-between pb-2">
+                                    <span>Scion / NIWA / GNS / ESR</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- After -->
+                    <div class="relative">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl blur opacity-20"></div>
+                        <h3 class="relative text-sm font-bold text-emerald-600 uppercase tracking-widest mb-4">Post-July 2025</h3>
+                        <div class="relative bg-white rounded-xl p-6 border border-emerald-200 shadow-sm">
+                            <div class="text-4xl font-bold text-emerald-600 mb-4">4</div>
+                            <div class="text-lg font-medium text-stone-800 mb-4">Public Research Organisations</div>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                                    <div class="font-bold text-emerald-900 text-sm">Bioeconomy Science Institute</div>
+                                    <div class="text-xs text-emerald-700">AgResearch + Plant & Food + Landcare + Scion</div>
+                                </div>
+                                <div class="p-3 bg-blue-50 rounded-lg border border-blue-100">
+                                    <div class="font-bold text-blue-900 text-sm">Earth Sciences NZ</div>
+                                    <div class="text-xs text-blue-700">NIWA + GNS + MetService</div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <div class="p-2 bg-violet-50 rounded border border-violet-100 flex-1 text-center">
+                                        <div class="text-xs font-bold text-violet-900">PHF Science</div>
+                                    </div>
+                                    <div class="p-2 bg-orange-50 rounded border border-orange-100 flex-1 text-center">
+                                        <div class="text-xs font-bold text-orange-900">Inst. for Advanced Tech</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Actor Density Matrix (Fixed Table) -->
+        <section id="matrix" class="mb-24 fade-in-section">
+            <h2 class="serif text-3xl font-bold mb-8">Actor Density & Complexity Over Time</h2>
+            
+            <div class="bg-white rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-stone-100 border-b border-stone-200">
+                            <tr>
+                                <th class="p-4 font-bold text-stone-700 text-sm uppercase tracking-wider">Period</th>
+                                <th class="p-4 font-bold text-stone-700 text-sm uppercase tracking-wider">Dominant Institutions</th>
+                                <th class="p-4 font-bold text-stone-700 text-sm uppercase tracking-wider">Density</th>
+                                <th class="p-4 font-bold text-stone-700 text-sm uppercase tracking-wider">Technical Depth</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100 text-sm">
+                            <tr class="table-row-hover transition">
+                                <td class="p-4 font-medium text-stone-900">1800–1840</td>
+                                <td class="p-4 text-stone-600">Māori Iwi & Hapū</td>
+                                <td class="p-4"><span class="px-2 py-1 bg-stone-200 text-stone-700 rounded text-xs font-medium">Low</span></td>
+                                <td class="p-4 text-stone-500">Indigenous ecological sophistication</td>
+                            </tr>
+                            <tr class="table-row-hover transition">
+                                <td class="p-4 font-medium text-stone-900">1840–1890</td>
+                                <td class="p-4 text-stone-600">Colonial Admin, Settlers</td>
+                                <td class="p-4"><span class="px-2 py-1 bg-stone-300 text-stone-800 rounded text-xs font-medium">Moderate</span></td>
+                                <td class="p-4 text-stone-500">Pastoral transformation</td>
+                            </tr>
+                            <tr class="table-row-hover transition bg-emerald-50/30">
+                                <td class="p-4 font-bold text-emerald-900">1890–1930</td>
+                                <td class="p-4 text-stone-800 font-medium">Lincoln, Dept of Ag, Refrigeration</td>
+                                <td class="p-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs font-bold border border-emerald-200">Increasing</span></td>
+                                <td class="p-4 text-emerald-800 font-medium">Refrigeration revolution</td>
+                            </tr>
+                            <tr class="table-row-hover transition bg-violet-50/30">
+                                <td class="p-4 font-bold text-violet-900">1930–1970</td>
+                                <td class="p-4 text-stone-800 font-medium">DSIR, Producer Boards</td>
+                                <td class="p-4"><span class="px-2 py-1 bg-violet-100 text-violet-800 rounded text-xs font-bold border border-violet-200">High</span></td>
+                                <td class="p-4 text-violet-800 font-medium">Institutionalized agriscience</td>
+                            </tr>
+                            <tr class="table-row-hover transition bg-orange-50/30">
+                                <td class="p-4 font-bold text-orange-900">1970–1990</td>
+                                <td class="p-4 text-stone-800 font-medium">CRIs, Reform Govt</td>
+                                <td class="p-4"><span class="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs font-medium border border-orange-200">Reorganized</span></td>
+                                <td class="p-4 text-orange-800 font-medium">Market discipline</td>
+                            </tr>
+                            <tr class="table-row-hover transition bg-blue-50/30">
+                                <td class="p-4 font-bold text-blue-900">1990–2010</td>
+                                <td class="p-4 text-stone-800 font-medium">Fonterra, IT Sector</td>
+                                <td class="p-4"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-bold border border-blue-200">Diversifying</span></td>
+                                <td class="p-4 text-blue-800 font-medium">Digital-biological integration</td>
+                            </tr>
+                            <tr class="table-row-hover transition bg-green-50/30">
+                                <td class="p-4 font-bold text-green-900">2010–Present</td>
+                                <td class="p-4 text-stone-800 font-medium">PROs, Regulators, Rocket Lab</td>
+                                <td class="p-4"><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium border border-green-200">Constrained</span></td>
+                                <td class="p-4 text-green-800 font-medium">Sustainability & Advanced Tech</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Structural Insight -->
+        <section class="fade-in-section bg-stone-900 text-stone-100 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none" style="background-image: radial-gradient(#57534e 1px, transparent 1px); background-size: 20px 20px;"></div>
+            
+            <h2 class="serif text-3xl font-bold mb-8 text-white relative z-10">Structural Insight</h2>
+            
+            <div class="grid md:grid-cols-2 gap-12 relative z-10">
+                <div>
+                    <h3 class="text-emerald-400 font-bold mb-6 flex items-center gap-2 uppercase tracking-wider text-sm">
+                        Pattern Characteristics
+                    </h3>
+                    <ul class="space-y-4 text-stone-300">
+                        <li class="flex items-start gap-4">
+                            <span class="text-emerald-500 font-bold mt-1">01</span>
+                            <span><strong class="text-white">Institutionally coordinated:</strong> DSIR → CRIs → PROs (1926-2025)</span>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span class="text-emerald-500 font-bold mt-1">02</span>
+                            <span><strong class="text-white">Sectorally concentrated:</strong> Biological production (dairy, meat)</span>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span class="text-emerald-500 font-bold mt-1">03</span>
+                            <span><strong class="text-white">Cooperative-structured:</strong> Fonterra legacy and farmer-owned institutions</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-stone-800/50 p-6 rounded-2xl border border-stone-700 backdrop-blur-sm">
+                    <h3 class="text-orange-400 font-bold mb-4 flex items-center gap-2 uppercase tracking-wider text-sm">
+                        Historical Contrast
+                    </h3>
+                    <p class="text-stone-400 text-sm leading-relaxed mb-4">
+                        Unlike typical industrial powers, NZ's tecnogenesis has <span class="text-white font-medium">never</span> been:
+                    </p>
+                    <ul class="text-stone-300 space-y-2 mb-6">
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>Military-industrial driven</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>Heavy-manufacturing driven</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>Capital goods ecosystem driven</li>
+                    </ul>
+                    <div class="pt-4 border-t border-stone-700">
+                        <p class="text-xs text-stone-500 italic">
+                            "The Actors define the technical space dimensions through their functional roles in creation, coordination, diffusion, importation, and decay."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="mt-24 text-center text-stone-400 text-sm pb-12">
+            <p>Based on historical records from Te Ara, MBIE, CRI reports.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Register GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. Scroll Progress Bar
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+            
+            // Navbar background transition on scroll
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-sm');
+            } else {
+                nav.classList.remove('shadow-sm');
+            }
+        };
+
+        // 2. Smooth Scroll Function
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                const headerOffset = 80;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        }
+
+        // 3. Intersection Observer for Fade-in sections
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    
+                    // Optional: Stop observing once visible
+                    // observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach((section) => {
+            observer.observe(section);
+        });
+
+        // 4. Add CSS keyframes for simple animations dynamically
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes fadeInDown {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-down { animation: fadeInDown 0.8s ease-out forwards; }
+            .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+            .animate-fade-in { animation: fadeInUp 1s ease-out forwards; }
+            .animate-blob {
+                animation: blob 7s infinite;
+            }
+            .animation-delay-2000 { animation-delay: 2s; }
+            .animation-delay-4000 { animation-delay: 4s; }
+            @keyframes blob {
+                0% { transform: translate(0px, 0px) scale(1); }
+                33% { transform: translate(30px, -50px) scale(1.1); }
+                66% { transform: translate(-20px, 20px) scale(0.9); }
+                100% { transform: translate(0px, 0px) scale(1); }
+            }
+            .animate-pulse-once {
+                animation: pulse-opacity 2s ease-in-out;
+            }
+            @keyframes pulse-opacity {
+                0% { opacity: 0.7; }
+                50% { opacity: 1; }
+                100% { opacity: 0.7; }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+        // 5. Staggered animation for Phase Markers using GSAP
+        gsap.utils.toArray('.phase-marker').forEach((marker, i) => {
+            gsap.from(marker, {
+                scrollTrigger: {
+                    trigger: marker,
+                    start: "top 80%",
+                    toggleActions: "play none none reverse"
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                delay: i * 0.1,
+                ease: "power2.out"
+            });
+        });
+
+    </script>
+</body>
+</html>
