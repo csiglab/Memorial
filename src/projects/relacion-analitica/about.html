@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acerca · Relación Analítica · República Dominicana</title>
+<meta name="description" content="Qué es la Relación Analítica de la República Dominicana: metodología, fuentes y actualización continua de los datos.">
+<meta name="theme-color" content="#17181C">
+<link rel="icon" href="img/logo.webp">
+<link rel="stylesheet" href="../../css/tipografia.css">
+<style>
+:root{
+  --paper:#ffffff; --paper-2:#f4f5f8; --paper-3:#edeef3;
+  --ink:#17181c; --ink-2:#45484f; --ink-3:#63666f; --ink-muted:#9d9fa9;
+  --steel:#3a5fb5; --peri-tint:#f2f5fd;
+  --lime:#c9e96e; --lime-deep:#4d7c0f; --lime-soft:#def2a2;
+  --line:#e7e8ee; --line-2:#f0f1f5; --line-strong:#d9dbe3;
+  --canvas:#e6e7ee; --navy:#17181c; --radius:16px;
+  --sans:"et-book",Palatino,"Palatino Linotype","Palatino LT STD","Book Antiqua",Georgia,serif;
+  --mono:Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  --shadow-card:0 1px 2px rgba(23,24,28,.03),0 10px 26px -22px rgba(23,24,28,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);font-size:1rem;line-height:1.7;color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.6rem}
+::selection{background:var(--lime-soft);color:var(--ink)}
+
+.topbar{background:var(--paper);border-bottom:1px solid var(--line)}
+.topbar__in{display:flex;align-items:center;justify-content:space-between;height:60px;gap:1rem}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.brand__logo{width:32px;height:32px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.brand__text{display:flex;flex-direction:column;line-height:1.15}
+.brand__name{font-weight:400;font-size:1.1rem;letter-spacing:-.01em}
+.brand__sub{font-family:var(--mono);font-size:.56rem;letter-spacing:.24em;color:var(--lime-deep);font-weight:600}
+.topnav{display:flex;align-items:center;gap:1.4rem}
+.topnav a{font-size:.85rem;color:var(--ink-2);text-decoration:none}
+.topnav a:hover{color:var(--ink)}
+
+.about{padding:3rem 0 4rem}
+.about__head{max-width:820px;margin-bottom:1.6rem}
+.geo{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--steel)}
+.about__head h1{font-size:clamp(2.2rem,5vw,3.2rem);font-weight:400;letter-spacing:-.02em;line-height:1.1;margin:.5rem 0}
+.subtitle{font-size:1.35rem;font-style:italic;color:var(--ink-2);line-height:1.4}
+.nav{font-size:.95rem;color:var(--ink-3);margin-top:.8rem}
+.nav a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+.nav a:hover{border-color:var(--ink-2)}
+
+.prose{max-width:820px}
+.prose h2{font-size:2.2rem;font-style:italic;font-weight:400;letter-spacing:-.01em;line-height:1.15;margin:2.4rem 0 1rem}
+.prose h3{font-size:1.4rem;font-style:italic;font-weight:400;line-height:1.25;margin:1.6rem 0 .5rem}
+.prose p{font-size:1.05rem;line-height:1.8;color:var(--ink-2);margin-bottom:1rem}
+.prose p b,.prose p strong{color:var(--ink)}
+.prose ul,.prose ol{font-size:1.05rem;line-height:1.8;color:var(--ink-2);margin:0 0 1.2rem 1.4rem}
+.prose li{margin-bottom:.35rem}
+.prose a{color:var(--ink-2);border-bottom:1px solid var(--line-strong);text-decoration:none}
+.prose a:hover{border-color:var(--ink-2)}
+.epigraph{background:var(--peri-tint);border-left:3px solid var(--steel);border-radius:0 var(--radius) var(--radius) 0;padding:1.1rem 1.4rem;margin:1.5rem 0;color:var(--ink-2);font-style:italic}
+.tabla{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:1.2rem;font-size:.9rem}
+.tabla th{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:.6rem .8rem;background:var(--paper-2);border-bottom:1px solid var(--line)}
+.tabla td{color:var(--ink-3);padding:.6rem .8rem;border-bottom:1px solid var(--line-2);vertical-align:top}
+.tabla tr:last-child td{border-bottom:0}
+
+footer{border-top:1px solid var(--line);background:var(--paper);margin-top:2rem}
+.foot__in{display:grid;grid-template-columns:1.4fr 1fr;gap:1.5rem;padding:1.8rem 0}
+.foot__in h2{font-size:1.2rem;font-style:italic;font-weight:400;margin-bottom:.5rem}
+.foot__in p,.foot__in li{font-size:.85rem;line-height:1.6;color:var(--ink-3)}
+.foot__in ul{list-style:none}
+.foot__in a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+.foot__brand{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--ink-muted)}
+
+@media (max-width:720px){
+  .foot__in{grid-template-columns:1fr}
+  .topnav a:not(.is-cta){display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__in">
+    <a class="brand" href="index.html">
+      <img class="brand__logo" src="img/logo.webp" alt="">
+      <div class="brand__text">
+        <span class="brand__name">Relación Analítica</span>
+        <span class="brand__sub">REPÚBLICA DOMINICANA</span>
+      </div>
+    </a>
+    <nav class="topnav">
+      <a href="index.html">Inicio</a>
+      <a href="index.html#fichas">Fichas</a>
+      <a class="is-cta" href="../../index.html">← Memorial</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <article class="about">
+    <header class="about__head">
+      <div class="geo">Acerca · Metodología y fuentes</div>
+      <h1>La relación analítica</h1>
+      <p class="subtitle">Una descripción de la República Dominicana que se mantiene al día</p>
+      <p class="nav">
+        <a href="index.html">Inicio</a> ·
+        <a href="index.html#complejidad">Complejidad económica</a> ·
+        <a href="index.html#fichas">Fichas</a>
+      </p>
+    </header>
+
+    <div class="prose">
+      <div class="epigraph">
+        Una <b>relación analítica</b> no es un informe puntual: es una <b>descripción razonada</b> de un país —su
+        economía y su sociedad— que combina cifras, series y comparaciones, y que se <b>actualiza de forma
+        continua</b> para conservar su vigencia.
+      </div>
+
+      <h2>Qué es</h2>
+      <p>
+        Esta relación describe la República Dominicana a través de sus <b>indicadores</b>: producto, precios, finanzas
+        públicas, dinero y reservas, comercio exterior, inversión, remesas y la base social (población, empleo,
+        bienestar). Cada indicador se presenta con su <b>último valor, su periodo y su variación</b>, y con una serie
+        histórica.
+      </p>
+      <p>
+        A diferencia de un <em>reporte</em> —un corte fechado—, la relación aspira a ser <b>permanente</b>: se
+        reescribe cuando cambian los datos. Se inspira en plataformas como <b>Data USA</b>, <b>Data Saudi</b> y
+        <b>La Complejidad Económica en España</b> (COTEC), construidas sobre Datawheel/d3plus.
+      </p>
+
+      <h2>Estructura</h2>
+      <ul>
+        <li><b>En vivo</b>: indicadores que se consultan en línea (tipo de cambio, población, PIB, inflación) con
+          auto-refresco; si la fuente no responde, se muestra la última cifra conocida.</li>
+        <li><b>Resumen</b>: lectura de conjunto del estado del país.</li>
+        <li><b>Capítulos</b>: real/macro, fiscal, monetario, externo/comercio y social.</li>
+        <li><b>Complejidad económica</b>: canasta exportadora y diversificación.</li>
+        <li><b>Reportes y fichas</b>: enlaces a las fuentes primarias.</li>
+      </ul>
+
+      <h2>Metodología</h2>
+      <p>
+        Los valores se presentan en la unidad y el periodo que publica la fuente. Las <b>variaciones</b> son
+        interanuales salvo indicación contraria; las series anuales se fechan por año y las mensuales por mes. Las
+        cifras de referencia (no en vivo) son la <b>última publicación conocida</b> y se acompañan de su año.
+      </p>
+      <div class="epigraph" style="font-style:normal">
+        <b>Aviso.</b> Las cifras de esta página son <b>referenciales</b> y sirven para ilustrar la estructura de la
+        relación. Antes de citar, verifique el dato en la <b>fuente primaria</b>.
+      </div>
+
+      <h2>Fuentes</h2>
+      <table class="tabla">
+        <thead><tr><th>Ámbito</th><th>Fuente</th><th>Enlace</th></tr></thead>
+        <tbody>
+          <tr><td>Macro, monetario, externo</td><td>Banco Central de la República Dominicana (BCRD)</td><td><a href="https://www.bancentral.gov.do/" target="_blank" rel="noopener">bancentral.gov.do</a></td></tr>
+          <tr><td>Población y encuestas</td><td>Oficina Nacional de Estadística (ONE)</td><td><a href="https://www.one.gob.do/" target="_blank" rel="noopener">one.gob.do</a></td></tr>
+          <tr><td>Finanzas públicas</td><td>Ministerio de Hacienda</td><td><a href="https://www.hacienda.gov.do/" target="_blank" rel="noopener">hacienda.gov.do</a></td></tr>
+          <tr><td>Comercio y aduanas</td><td>Dirección General de Aduanas (DGA)</td><td><a href="https://www.aduanas.gob.do/" target="_blank" rel="noopener">aduanas.gob.do</a></td></tr>
+          <tr><td>Impuestos internos</td><td>DGII</td><td><a href="https://www.dgii.gov.do/" target="_blank" rel="noopener">dgii.gov.do</a></td></tr>
+          <tr><td>Comparación internacional</td><td>World Bank Open Data</td><td><a href="https://data.worldbank.org/country/DO" target="_blank" rel="noopener">data.worldbank.org</a></td></tr>
+          <tr><td>Complejidad económica</td><td>OEC / Atlas of Economic Complexity (Growth Lab)</td><td><a href="https://oec.world/en/profile/country/dom" target="_blank" rel="noopener">oec.world</a></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Cómo se actualiza</h2>
+      <p>
+        La relación combina dos capas: una <b>estática curada</b> (series y valores de referencia, con su fuente y
+        periodo) y una <b>capa en vivo</b> que consulta APIs públicas con CORS al cargar la página y se refresca
+        periódicamente. Cuando una fuente no está disponible, la capa en vivo cae al último valor de referencia.
+      </p>
+      <ul>
+        <li>World Bank API — <span class="mono" style="font-family:var(--mono);font-size:.9em">api.worldbank.org/v2/country/DOM/indicator/…</span></li>
+        <li>Tipo de cambio — API pública de tipos de cambio (open.er-api.com)</li>
+      </ul>
+
+      <h2>Créditos</h2>
+      <p>
+        Inspiración de producto y diseño: <a href="https://datausa.io/" target="_blank" rel="noopener">Data USA</a> ·
+        <a href="https://datasaudi.sa/en" target="_blank" rel="noopener">Data Saudi</a> ·
+        <a href="https://complejidadeconomica.cotec.es/" target="_blank" rel="noopener">La Complejidad Económica en
+        España (COTEC)</a> — todas construidas con Datawheel / d3plus. Gráficos de esta relación: <b>SVG propio</b>,
+        sin dependencias. Parte de <a href="../../index.html">Memoria Dominicanensis</a>.
+      </p>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <div class="wrap foot__in">
+    <div>
+      <h2>Relación Analítica · República Dominicana</h2>
+      <p>Descripción analítica con reportes en vivo. Parte de Memoria Dominicanensis.</p>
+      <p class="foot__brand">MEMORIA DOMINICANENSIS · RELACIÓN ANALÍTICA</p>
+    </div>
+    <div>
+      <h2>Navegación</h2>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="index.html#complejidad">Complejidad económica</a></li>
+        <li><a href="index.html#fichas">Fichas</a></li>
+        <li><a href="../../index.html">Memorial Dominicanensis</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

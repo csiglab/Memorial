@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relación Analítica · República Dominicana</title>
+<meta name="description" content="Relación analítica de la República Dominicana: descripción de su economía y sociedad con indicadores, gráficos y reportes en vivo.">
+<meta name="theme-color" content="#17181C">
+<link rel="icon" href="img/logo.webp">
+<link rel="stylesheet" href="../../css/tipografia.css">
+<style>
+:root{
+  --paper:#ffffff; --paper-2:#f4f5f8; --paper-3:#edeef3;
+  --ink:#17181c; --ink-2:#45484f; --ink-3:#63666f; --ink-muted:#9d9fa9;
+  --steel:#3a5fb5; --peri-tint:#f2f5fd;
+  --lime:#c9e96e; --lime-deep:#4d7c0f; --lime-soft:#def2a2;
+  --line:#e7e8ee; --line-2:#f0f1f5; --line-strong:#d9dbe3;
+  --canvas:#e6e7ee; --navy:#17181c; --radius:16px;
+  --up:#2f7d4f; --down:#c0392b;
+  --sans:"et-book",Palatino,"Palatino Linotype","Palatino LT STD","Book Antiqua",Georgia,serif;
+  --mono:Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  --shadow-card:0 1px 2px rgba(23,24,28,.03),0 10px 26px -22px rgba(23,24,28,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:.95rem;line-height:1.6;color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.6rem}
+::selection{background:var(--lime-soft);color:var(--ink)}
+.mono{font-family:var(--mono)}
+
+/* topbar */
+.topbar{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.topbar__in{display:flex;align-items:center;justify-content:space-between;height:60px;gap:1rem}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.brand__logo{width:32px;height:32px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.brand__text{display:flex;flex-direction:column;line-height:1.15}
+.brand__name{font-weight:400;font-size:1.1rem;letter-spacing:-.01em}
+.brand__sub{font-family:var(--mono);font-size:.56rem;letter-spacing:.24em;color:var(--lime-deep);font-weight:600}
+.topnav{display:flex;align-items:center;gap:1.4rem}
+.topnav a{font-size:.85rem;color:var(--ink-2);text-decoration:none}
+.topnav a:hover{color:var(--ink)}
+
+/* entidad */
+.entidad{padding:2.6rem 0 1.6rem}
+.entidad .geo{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--steel)}
+.entidad h1{font-size:clamp(2.2rem,5vw,3.2rem);font-weight:400;letter-spacing:-.02em;line-height:1.08;margin:.5rem 0 .6rem}
+.entidad p{font-size:1.1rem;line-height:1.7;color:var(--ink-2);max-width:680px}
+.entidad__bar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.2rem}
+.search{flex:1 1 260px;min-width:200px;font-family:var(--sans);font-size:1rem;color:var(--ink);background:var(--paper);border:1px solid var(--line-strong);border-radius:10px;padding:.6rem .8rem;outline:none}
+.search:focus{border-color:var(--steel)}
+.stamp{font-family:var(--mono);font-size:.62rem;color:var(--ink-muted);white-space:nowrap}
+
+/* en vivo */
+.live{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin:1.4rem 0 0}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-card);padding:1rem 1.1rem;position:relative}
+.kpi__dot{position:absolute;top:.9rem;right:.9rem;width:8px;height:8px;border-radius:50%;background:var(--ink-muted)}
+.kpi.is-live .kpi__dot{background:var(--lime-deep);box-shadow:0 0 0 0 rgba(77,124,15,.5);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(77,124,15,.45)}70%{box-shadow:0 0 0 8px rgba(77,124,15,0)}100%{box-shadow:0 0 0 0 rgba(77,124,15,0)}}
+.kpi__name{font-size:.95rem;font-weight:400}
+.kpi__val{font-size:1.7rem;font-weight:400;letter-spacing:-.02em;margin:.15rem 0 .1rem;font-variant-numeric:tabular-nums}
+.kpi__meta{font-family:var(--mono);font-size:.6rem;letter-spacing:.03em;color:var(--ink-muted);display:flex;gap:.5rem;flex-wrap:wrap}
+.kpi__meta a{color:var(--ink-3);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+.delta{font-family:var(--mono);font-size:.68rem}
+.delta.up{color:var(--up)}.delta.down{color:var(--down)}
+
+/* resumen */
+.resumen{padding:2.4rem 0 1rem}
+.resumen h2{font-size:2.2rem;font-style:italic;font-weight:400;letter-spacing:-.01em;margin-bottom:1rem}
+.resumen p{font-size:1.05rem;line-height:1.8;color:var(--ink-2);max-width:820px;margin-bottom:1rem}
+.resumen p b{color:var(--ink)}
+
+/* secciones / indicadores */
+.chapter{padding:2.4rem 0;border-top:1px solid var(--line)}
+.chapter__head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.chapter__eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--steel)}
+.chapter h2{font-size:2.2rem;font-style:italic;font-weight:400;letter-spacing:-.01em;margin-top:.3rem}
+.chapter__intro{font-size:1rem;line-height:1.7;color:var(--ink-3);max-width:760px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.ind{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-card);padding:1.1rem 1.2rem}
+.ind__head{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem}
+.ind__head h3{font-size:1.05rem;font-weight:400}
+.ind__src{font-family:var(--mono);font-size:.58rem;letter-spacing:.03em;color:var(--ink-muted)}
+.ind__val{font-size:1.9rem;font-weight:400;letter-spacing:-.02em;margin:.2rem 0 .5rem;font-variant-numeric:tabular-nums}
+.ind__val small{font-size:.7rem;color:var(--ink-muted);font-family:var(--mono);margin-left:.4rem}
+.ind__chart{width:100%;height:120px;display:block}
+.ind__foot{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-top:.5rem;flex-wrap:wrap}
+.toggles{display:flex;gap:.3rem}
+.tg{font-family:var(--mono);font-size:.56rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:.25rem .5rem;cursor:pointer}
+.tg.on{background:var(--navy);border-color:var(--navy);color:var(--lime)}
+.ind__note{font-family:var(--mono);font-size:.56rem;color:var(--ink-muted)}
+.empty{display:none}
+.dim{opacity:.25}
+
+/* treemap complejidad */
+.tm{position:relative;width:100%;height:340px;background:var(--paper-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-card)}
+.tm .cell{position:absolute;overflow:hidden;border-radius:3px;color:#fff}
+.tm .cell b{display:block;padding:.4rem .5rem;font-size:.8rem;font-weight:600;line-height:1.15}
+.tm .cell small{display:block;padding:0 .5rem;font-family:var(--mono);font-size:.56rem;opacity:.85}
+
+/* reportes */
+.reportes{padding:2.4rem 0;border-top:1px solid var(--line)}
+.reportes h2{font-size:2.2rem;font-style:italic;font-weight:400;margin-bottom:1rem}
+.section-intro{font-size:1rem;color:var(--ink-3);max-width:760px;margin-bottom:1rem}
+.section-intro a{color:var(--ink-2)}
+.rep-list{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.rep{display:block;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-card);padding:1rem 1.1rem;text-decoration:none;transition:border-color .15s,transform .15s}
+.rep:hover{border-color:var(--line-strong);transform:translateY(-2px)}
+.rep.is-completa{background:#f4fae8;border-color:var(--lime-deep)}
+.rep b{display:block;font-size:1rem;font-weight:400}
+.rep span{font-family:var(--mono);font-size:.58rem;color:var(--ink-muted)}
+.rep em{display:block;font-style:normal;font-family:var(--mono);font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);margin-top:.45rem}
+.rep.is-completa em{color:var(--lime-deep)}
+
+footer{border-top:1px solid var(--line);background:var(--paper);margin-top:1rem}
+.foot__in{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;padding:1.8rem 0}
+.foot__in h2{font-size:1.2rem;font-style:italic;font-weight:400;margin-bottom:.5rem}
+.foot__in p,.foot__in li{font-size:.85rem;line-height:1.6;color:var(--ink-3)}
+.foot__in ul{list-style:none}
+.foot__in a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+.foot__in a:hover{border-color:var(--ink-2)}
+.foot__brand{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--ink-muted)}
+
+@media (max-width:920px){
+  .live{grid-template-columns:repeat(2,1fr)}
+  .cards{grid-template-columns:1fr}
+  .rep-list{grid-template-columns:1fr 1fr}
+}
+@media (max-width:640px){
+  .live,.rep-list{grid-template-columns:1fr}
+  .topnav a:not(.is-cta){display:none}
+  .foot__in{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__in">
+    <a class="brand" href="index.html">
+      <img class="brand__logo" src="img/logo.webp" alt="">
+      <div class="brand__text">
+        <span class="brand__name">Relación Analítica</span>
+        <span class="brand__sub">REPÚBLICA DOMINICANA</span>
+      </div>
+    </a>
+    <nav class="topnav">
+      <a href="about.html">Acerca</a>
+      <a href="#fichas">Fichas</a>
+      <a href="#complejidad">Complejidad</a>
+      <a class="is-cta" href="../../index.html">← Memorial</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="entidad">
+    <div class="geo">País · Región del Caribe</div>
+    <h1>República Dominicana</h1>
+    <p>Una <b>relación analítica</b>: descripción razonada de la economía y la sociedad dominicanas —indicadores, series y comparaciones— con algunos <b>reportes en vivo</b>. No es un informe puntual, sino una lectura que se mantiene al día.</p>
+    <div class="entidad__bar">
+      <input class="search" id="q" type="search" placeholder="Buscar indicador (PIB, inflación, remesas…)" autocomplete="off" aria-label="Buscar indicador">
+      <span class="stamp" id="stamp">Actualizado: —</span>
+    </div>
+  </section>
+
+  <!-- EN VIVO -->
+  <section class="live" id="live" aria-label="Indicadores en vivo">
+    <div class="kpi is-live" data-live="fx">
+      <span class="kpi__dot"></span>
+      <div class="kpi__name">Tipo de cambio</div>
+      <div class="kpi__val" id="v-fx">—</div>
+      <div class="kpi__meta"><span id="m-fx">DOP por US$1</span>·<span data-ts></span></div>
+    </div>
+    <div class="kpi is-live" data-live="pop">
+      <span class="kpi__dot"></span>
+      <div class="kpi__name">Población</div>
+      <div class="kpi__val" id="v-pop">—</div>
+      <div class="kpi__meta"><span id="m-pop">World Bank</span>·<span data-ts></span></div>
+    </div>
+    <div class="kpi is-live" data-live="gdp">
+      <span class="kpi__dot"></span>
+      <div class="kpi__name">PIB (US$ corrientes)</div>
+      <div class="kpi__val" id="v-gdp">—</div>
+      <div class="kpi__meta"><span id="m-gdp">World Bank</span>·<span data-ts></span></div>
+    </div>
+    <div class="kpi is-live" data-live="inf">
+      <span class="kpi__dot"></span>
+      <div class="kpi__name">Inflación (IPC)</div>
+      <div class="kpi__val" id="v-inf">—</div>
+      <div class="kpi__meta"><span id="m-inf">World Bank</span>·<span data-ts></span></div>
+    </div>
+  </section>
+
+  <section class="resumen">
+    <h2>Resumen</h2>
+    <p>La República Dominicana es una <b>economía pequeña, abierta y de renta media-alta</b>, la mayor del Caribe, sostenida por servicios (turismo), zonas francas, remesas y un sector agroindustrial. Crece por encima de su región, con inflación dentro de la meta y reservas que amortiguan el ciclo externo.</p>
+    <p>El país <b>importa mucho más de lo que exporta</b> en bienes; el déficit comercial se compensa con turismo, remesas e inversión extranjera. La <b>complejidad económica</b> es baja: la canasta exportadora gravita en torno a instrumentos médicos, ferroníquel, oro, azúcar y productos agropecuarios. El reto es <b>diversificar hacia bienes y servicios más sofisticados</b> sin perder la estabilidad macroeconómica.</p>
+  </section>
+
+  <div id="chapters"></div>
+
+  <!-- COMPLEJIDAD -->
+  <section class="chapter" id="complejidad">
+    <div class="chapter__head">
+      <div>
+        <div class="chapter__eyebrow">Espacio de productos</div>
+        <h2>Complejidad económica</h2>
+      </div>
+    </div>
+    <p class="chapter__intro">Peso relativo de los principales productos exportados (cifras de referencia; la canasta exportadora dominicana). El tamaño representa la participación estimada en las exportaciones de bienes. Un aparato productivo <em>poco diversificado</em> concentra el riesgo.</p>
+    <div class="tm" id="treemap" style="margin-top:1rem"></div>
+    <p class="ind__note" style="margin-top:.7rem">Fuente: Aduanas/DGA, BCRD; complejidad según OEC / Atlas of Economic Complexity (Growth Lab, Harvard). <a href="https://oec.world/en/profile/country/dom" target="_blank" rel="noopener">Ver perfil en OEC →</a></p>
+  </section>
+
+  <!-- FICHAS -->
+  <section class="reportes" id="fichas">
+    <h2>Fichas</h2>
+    <p class="section-intro">Fichas temáticas de la relación: una por ámbito, con estado de avance. <a href="fichas-y-reportes/index.html">Ver el catálogo completo →</a></p>
+    <div class="rep-list">
+      <a class="rep is-completa" href="fichas-y-reportes/sistema-legal.html"><b>Sistema Legal</b><span>Marco constitucional, poderes, carrera judicial e indicadores</span><em>Completa</em></a>
+      <a class="rep" href="fichas-y-reportes/educacion.html"><b>Educación</b><span>Acceso, calidad y resultados</span><em>Borrador</em></a>
+      <a class="rep" href="fichas-y-reportes/salud.html"><b>Salud</b><span>Cobertura, servicios y resultados</span><em>Borrador</em></a>
+      <a class="rep" href="fichas-y-reportes/energia.html"><b>Energía y electricidad</b><span>Generación, distribución y consumo</span><em>Borrador</em></a>
+      <a class="rep" href="fichas-y-reportes/sistema-financiero.html"><b>Sistema financiero</b><span>Banca, crédito y mercados</span><em>Borrador</em></a>
+      <a class="rep" href="fichas-y-reportes/infraestructura.html"><b>Infraestructura y transporte</b><span>Obras, movilidad y conectividad</span><em>Borrador</em></a>
+      <a class="rep" href="fichas-y-reportes/empleo.html"><b>Empleo y mercado laboral</b><span>Ocupación, salarios e informalidad</span><em>Borrador</em></a>
+      <a class="rep" href="fichas-y-reportes/seguridad.html"><b>Seguridad ciudadana</b><span>Delito, victimización y respuesta</span><em>Borrador</em></a>
+      <a class="rep" href="about.html"><b>Metodología y fuentes</b><span>Acerca de la relación analítica</span><em>Ficha</em></a>
+    </div>
+  </section>
+
+  <!-- FUENTES AMIGAS -->
+  <section class="reportes" id="fuentes">
+    <h2>Fuentes amigas</h2>
+    <p class="section-intro">Fuentes primarias y aliadas para consultar y verificar los datos.</p>
+    <div class="rep-list">
+      <a class="rep" href="https://www.bancentral.gov.do/" target="_blank" rel="noopener"><b>BCRD</b><span>Banco Central: estadísticas</span></a>
+      <a class="rep" href="https://www.one.gob.do/" target="_blank" rel="noopener"><b>ONE</b><span>Oficina Nacional de Estadística</span></a>
+      <a class="rep" href="https://www.dgii.gov.do/" target="_blank" rel="noopener"><b>DGII</b><span>Impuestos internos</span></a>
+      <a class="rep" href="https://www.hacienda.gov.do/" target="_blank" rel="noopener"><b>Ministerio de Hacienda</b><span>Finanzas públicas</span></a>
+      <a class="rep" href="https://oec.world/en/profile/country/dom" target="_blank" rel="noopener"><b>OEC</b><span>Complejidad y comercio</span></a>
+      <a class="rep" href="https://www.poderjudicial.gob.do/" target="_blank" rel="noopener"><b>Poder Judicial</b><span>Justicia</span></a>
+      <a class="rep" href="https://worldjusticeproject.org/rule-of-law-index/" target="_blank" rel="noopener"><b>World Justice Project</b><span>Estado de derecho</span></a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap foot__in">
+    <div>
+      <h2>Relación Analítica · República Dominicana</h2>
+      <p>Descripción analítica con reportes en vivo. Inspirada en Data USA, Data Saudi y La Complejidad Económica en España (COTEC). Cifras de referencia: verifique siempre la fuente primaria (BCRD, ONE, Hacienda, OEC).</p>
+      <p class="foot__brand">MEMORIA DOMINICANENSIS · RELACIÓN ANALÍTICA</p>
+    </div>
+    <div>
+      <h2>Fuentes</h2>
+      <ul>
+        <li><a href="https://www.bancentral.gov.do/" target="_blank" rel="noopener">Banco Central (BCRD)</a></li>
+        <li><a href="https://www.one.gob.do/" target="_blank" rel="noopener">ONE</a></li>
+        <li><a href="https://data.worldbank.org/country/DO" target="_blank" rel="noopener">World Bank</a></li>
+        <li><a href="https://oec.world/en/profile/country/dom" target="_blank" rel="noopener">OEC / Atlas</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+"use strict";
+/* ══ utilidades ══ */
+function el(id){ return document.getElementById(id); }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function num(v, d){ if(v==null||isNaN(v)) return "—"; return Number(v).toLocaleString("es-DO",{minimumFractionDigits:d||0,maximumFractionDigits:d||0}); }
+function pct(v){ return (v>0?"+":"") + num(v,1) + "%"; }
+function deltaClass(v){ return v>0?"up":v<0?"down":""; }
+
+/* ══ gráficos SVG vanilla ══ */
+function sparkline(series, opt){
+  opt = opt || {}; var w = 320, h = 120, pad = 8;
+  if(!series || series.length < 2) return '<svg class="ind__chart" viewBox="0 0 '+w+' '+h+'"></svg>';
+  var xs = series.map(function(p){ return p.x; }), vs = series.map(function(p){ return p.v; });
+  var min = Math.min.apply(null, vs), max = Math.max.apply(null, vs);
+  if(min === max){ min -= 1; max += 1; }
+  var x = function(i){ return pad + i*(w-2*pad)/(series.length-1); };
+  var y = function(v){ return h-pad - (v-min)*(h-2*pad)/(max-min); };
+  var line = series.map(function(p,i){ return (i?"L":"M") + x(i).toFixed(1) + " " + y(p.v).toFixed(1); }).join(" ");
+  var area = "M" + x(0).toFixed(1) + " " + (h-pad) + " " + series.map(function(p,i){ return "L"+x(i).toFixed(1)+" "+y(p.v).toFixed(1); }).join(" ") + " L" + x(series.length-1).toFixed(1) + " " + (h-pad) + " Z";
+  var bars = opt.bars ? series.map(function(p,i){ var bw=(w-2*pad)/series.length*0.55; return '<rect x="'+(x(i)-bw/2).toFixed(1)+'" y="'+y(p.v).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+(h-pad-y(p.v)).toFixed(1)+'" fill="var(--steel)" opacity=".85"/>'; }).join("") : "";
+  var dots = series.map(function(p,i){ return '<circle cx="'+x(i).toFixed(1)+'" cy="'+y(p.v).toFixed(1)+'" r="2.4" fill="var(--steel)"><title>'+p.x+": "+num(p.v,2)+"</title></circle>"; }).join("");
+  return '<svg class="ind__chart" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" role="img">'
+    + (opt.bars ? bars : '<path d="'+area+'" fill="var(--steel)" opacity=".08"/><path d="'+line+'" fill="none" stroke="var(--steel)" stroke-width="1.8"/>'+dots)
+    + '<text x="'+pad+'" y="'+(h-1)+'" font-family="var(--mono)" font-size="9" fill="var(--ink-muted)">'+series[0].x+'</text>'
+    + '<text x="'+(w-pad)+'" y="'+(h-1)+'" text-anchor="end" font-family="var(--mono)" font-size="9" fill="var(--ink-muted)">'+series[series.length-1].x+'</text>'
+    + "</svg>";
+}
+
+/* treemap squarified (vanilla) */
+function squarify(items, x, y, w, h, out){
+  var i=0, n=items.length;
+  function worst(row, area, side){ var mx=0,mn=Infinity; for(var k=0;k<row.length;k++){var a=row[k].a; if(a>mx)mx=a; if(a<mn)mn=a;} var s2=side*side; return Math.max(s2*mx/(area*area),(area*area)/(s2*mn)); }
+  while(i<n && w>0.5 && h>0.5){
+    var side=Math.min(w,h), row=[items[i]], area=items[i].a; i++;
+    while(i<n){ var na=area+items[i].a; if(worst(row,area,side)>=worst(row.concat([items[i]]),na,side)){ row.push(items[i]); area=na; i++; } else break; }
+    var strip=area/side, r;
+    if(w>=h){ var cy=y; for(r=0;r<row.length;r++){ var ch=strip?row[r].a/strip:0; out.push({it:row[r],x:x,y:cy,w:strip,h:ch}); cy+=ch; } x+=strip; w-=strip; }
+    else { var cx=x; for(r=0;r<row.length;r++){ var cw=strip?row[r].a/strip:0; out.push({it:row[r],x:cx,y:y,w:cw,h:strip}); cx+=cw; } y+=strip; h-=strip; }
+  }
+}
+function drawTreemap(container, data){
+  var W = container.clientWidth, H = container.clientHeight;
+  if(!W||!H) return;
+  var total = data.reduce(function(s,d){ return s+d.value; },0) || 1;
+  var area = W*H;
+  var scaled = data.map(function(d){ return {name:d.name, value:d.value, color:d.color, a:d.value/total*area}; }).sort(function(a,b){ return b.a-a.a; });
+  var rects = []; squarify(scaled, 0,0,W,H, rects);
+  container.innerHTML = rects.map(function(r){
+    if(r.w < 2 || r.h < 2) return "";
+    var showName = r.w > 70 && r.h > 30, showVal = r.h > 52 && r.w > 90;
+    var title = esc(r.it.name) + ": " + r.it.value + "%";
+    return '<div class="cell" style="left:'+r.x.toFixed(1)+'px;top:'+r.y.toFixed(1)+'px;width:'+r.w.toFixed(1)+'px;height:'+r.h.toFixed(1)+'px;background:'+r.it.color+';box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)" title="'+title+'">'
+      + (showName ? "<b>"+esc(r.it.name)+"</b>" : "")
+      + (showVal ? "<small>"+r.it.value.toFixed(1)+"%</small>" : "")
+      + "</div>";
+  }).join("");
+}
+
+/* ══ datos de referencia (cifras publicadas; verificar en la fuente) ══ */
+var FUENTE = { bcr:"BCRD", one:"ONE", wb:"World Bank", dga:"DGA/Aduanas", mh:"Hacienda", oec:"OEC/Atlas" };
+var SECCIONES = [
+  { id:"real", eyebrow:"Real / macro", titulo:"Actividad y precios",
+    intro:"Producto, ingreso y precios. La economía dominicana crece sostenidamente y su inflación se ha mantenido cerca de la meta del BCRD (4% ± 1).",
+    ind:[
+      { name:"PIB nominal", unit:"US$ mil M", src:"bcr", period:"2023", value:121.0, delta:6.5,
+        series:[{x:2018,v:85.6},{x:2019,v:88.9},{x:2020,v:78.8},{x:2021,v:94.2},{x:2022,v:113.6},{x:2023,v:121.0}] },
+      { name:"PIB per cápita", unit:"US$", src:"wb", period:"2023", value:11300, delta:5.8,
+        series:[{x:2018,v:8100},{x:2019,v:8300},{x:2020,v:7300},{x:2021,v:8700},{x:2022,v:10500},{x:2023,v:11300}] },
+      { name:"Crecimiento del PIB", unit:"%", src:"bcr", period:"2023", value:2.4, delta:-2.5,
+        series:[{x:2018,v:6.9},{x:2019,v:5.1},{x:2020,v:-6.7},{x:2021,v:12.3},{x:2022,v:4.9},{x:2023,v:2.4}] },
+      { name:"Inflación (IPC)", unit:"%", src:"bcr", period:"dic 2023", value:3.6, delta:-4.1,
+        series:[{x:"ene",v:7.2},{x:"mar",v:5.9},{x:"may",v:4.4},{x:"jul",v:4.1},{x:"sep",v:3.9},{x:"dic",v:3.6}] }
+    ] },
+  { id:"fiscal", eyebrow:"Fiscal", titulo:"Finanzas públicas",
+    intro:"Ingresos, gastos y deuda del sector público consolidado. El déficit y la deuda se financian en mercados locales e internacionales.",
+    ind:[
+      { name:"Ingresos del gobierno", unit:"% PIB", src:"mh", period:"2023", value:15.6, delta:0.3,
+        series:[{x:2019,v:14.9},{x:2020,v:14.1},{x:2021,v:15.0},{x:2022,v:15.3},{x:2023,v:15.6}] },
+      { name:"Gastos del gobierno", unit:"% PIB", src:"mh", period:"2023", value:18.6, delta:-0.4,
+        series:[{x:2019,v:17.9},{x:2020,v:20.4},{x:2021,v:19.2},{x:2022,v:19.0},{x:2023,v:18.6}] },
+      { name:"Balance fiscal", unit:"% PIB", src:"mh", period:"2023", value:-3.0, delta:0.2,
+        series:[{x:2019,v:-2.2},{x:2020,v:-6.3},{x:2021,v:-4.2},{x:2022,v:-3.2},{x:2023,v:-3.0}] },
+      { name:"Deuda pública", unit:"% PIB", src:"mh", period:"2023", value:59.0, delta:-0.8,
+        series:[{x:2019,v:50.5},{x:2020,v:69.7},{x:2021,v:62.6},{x:2022,v:59.8},{x:2023,v:59.0}] }
+    ] },
+  { id:"monetario", eyebrow:"Monetario", titulo:"Dinero, tasas y reservas",
+    intro:"El BCRD conduce la política monetaria bajo un esquema de metas de inflación; las reservas internacionales respaldan la estabilidad cambiaria.",
+    ind:[
+      { name:"Tasa de política", unit:"%", src:"bcr", period:"2024", value:6.0, delta:-1.0,
+        series:[{x:2021,v:3.0},{x:2022,v:8.5},{x:"2023",v:7.0},{x:"2024",v:6.0}] },
+      { name:"Medio circulante (M2)", unit:"RD$ mil M", src:"bcr", period:"2023", value:2000, delta:11.0,
+        series:[{x:2019,v:1200},{x:2020,v:1450},{x:2021,v:1650},{x:2022,v:1800},{x:2023,v:2000}] },
+      { name:"Reservas internacionales", unit:"US$ mil M", src:"bcr", period:"2023", value:14.7, delta:8.1,
+        series:[{x:2019,v:8900},{x:2020,v:10800},{x:2021,v:13000},{x:2022,v:13600},{x:2023,v:14700}] },
+      { name:"Tipo de cambio", unit:"DOP/US$", src:"bcr", period:"2024", value:60.0, delta:4.0,
+        series:[{x:2019,v:52.9},{x:2020,v:58.2},{x:2021,v:57.2},{x:2022,v:55.0},{x:2023,v:57.7},{x:2024,v:60.0}] }
+    ] },
+  { id:"externo", eyebrow:"Externo / comercio", titulo:"Comercio, inversión y remesas",
+    intro:"Bienes que se venden y se compran, inversión extranjera y remesas. El déficit comercial en bienes se compensa con servicios, turismo, remesas e IED.",
+    ind:[
+      { name:"Exportaciones de bienes", unit:"US$ mil M", src:"dga", period:"2023", value:12.2, delta:1.9,
+        series:[{x:2019,v:11000},{x:2020,v:9900},{x:2021,v:11500},{x:2022,v:12000},{x:2023,v:12200}] },
+      { name:"Importaciones de bienes", unit:"US$ mil M", src:"dga", period:"2023", value:28.8, delta:-2.1,
+        series:[{x:2019,v:20000},{x:2020,v:17000},{x:2021,v:24000},{x:2022,v:29400},{x:2023,v:28800}] },
+      { name:"Inversión extranjera (IED)", unit:"US$ mil M", src:"bcr", period:"2023", value:4.4, delta:6.8,
+        series:[{x:2019,v:3000},{x:2020,v:2500},{x:2021,v:3100},{x:2022,v:4100},{x:2023,v:4400}] },
+      { name:"Remesas", unit:"US$ mil M", src:"bcr", period:"2023", value:10.15, delta:4.3,
+        series:[{x:2019,v:7100},{x:2020,v:8300},{x:2021,v:10400},{x:2022,v:9800},{x:2023,v:10150}] }
+    ] },
+  { id:"social", eyebrow:"Social", titulo:"Población, empleo y bienestar",
+    intro:"La base social: cuántos somos, cuánto trabajamos y cómo vivimos.",
+    ind:[
+      { name:"Población", unit:"millones", src:"one", period:"2023", value:10.7, delta:0.9,
+        series:[{x:2018,v:10.2},{x:2019,v:10.3},{x:2020,v:10.4},{x:2021,v:10.5},{x:2022,v:10.6},{x:2023,v:10.7}] },
+      { name:"Tasa de desempleo", unit:"%", src:"bcr", period:"2023", value:5.7, delta:-0.5,
+        series:[{x:2019,v:6.2},{x:2020,v:8.5},{x:2021,v:7.3},{x:2022,v:6.2},{x:2023,v:5.7}] },
+      { name:"Participación laboral", unit:"%", src:"one", period:"2023", value:64.0, delta:0.6,
+        series:[{x:2019,v:63.0},{x:2020,v:60.5},{x:2021,v:62.0},{x:2022,v:63.4},{x:2023,v:64.0}] },
+      { name:"Esperanza de vida", unit:"años", src:"wb", period:"2022", value:74.0, delta:0.4,
+        series:[{x:2018,v:73.9},{x:2019,v:74.2},{x:2020,v:72.8},{x:2021,v:73.1},{x:2022,v:74.0}] }
+    ] }
+];
+
+var TREEMAP = [
+  { name:"Instrumentos médicos", value:22, color:"#3a5fb5" },
+  { name:"Ferroníquel", value:14, color:"#4d7c0f" },
+  { name:"Oro", value:12, color:"#0e7490" },
+  { name:"Azúcar", value:9, color:"#7c3aed" },
+  { name:"Puros/cigarros", value:8, color:"#b45309" },
+  { name:"Cacao", value:7, color:"#be123c" },
+  { name:"Textiles/calzado", value:6, color:"#15803d" },
+  { name:"Ron", value:5, color:"#c2410c" },
+  { name:"Aguacate", value:5, color:"#0f766e" },
+  { name:"Banano", value:4, color:"#6366f1" },
+  { name:"Otros", value:8, color:"#475569" }
+];
+
+/* ══ render de capítulos ══ */
+function renderChapters(){
+  var host = el("chapters");
+  host.innerHTML = SECCIONES.map(function(sec, si){
+    var cards = sec.ind.map(function(d, di){
+      var gid = sec.id+"-"+di;
+      return '<div class="ind" id="ind-'+gid+'" data-name="'+esc(d.name.toLowerCase())+' '+(d.src||"")+'">'
+        + '<div class="ind__head"><h3>'+esc(d.name)+'</h3><span class="ind__src">'+esc(FUENTE[d.src]||"")+'</span></div>'
+        + '<div class="ind__val">'+num(d.value, d.value<100?1:0)+'<small>'+esc(d.unit)+' · '+esc(d.period)+'</small></div>'
+        + '<div class="ind__chart" data-chart="'+gid+'">'+sparkline(d.series)+'</div>'
+        + '<div class="ind__foot"><div class="toggles">'
+        + '<button class="tg on" data-toggle="value" data-g="'+gid+'">Valor</button>'
+        + '<button class="tg" data-toggle="growth" data-g="'+gid+'">Variación</button>'
+        + '</div><span class="ind__note">'+(d.delta!=null?'Δ '+pct(d.delta):"")+'</span></div>'
+        + "</div>";
+    }).join("");
+    return '<section class="chapter" id="'+sec.id+'">'
+      + '<div class="chapter__head"><div><div class="chapter__eyebrow">'+esc(sec.eyebrow)+'</div><h2>'+esc(sec.titulo)+"</h2></div></div>"
+      + '<p class="chapter__intro">'+esc(sec.intro)+"</p>"
+      + '<div class="cards" style="margin-top:1.2rem">'+cards+"</div></section>";
+  }).join("");
+
+  // variación (crecimiento) por barra: derivar de la serie
+  host.querySelectorAll(".tg").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var gid = btn.getAttribute("data-g"), mode = btn.getAttribute("data-toggle");
+      var box = host.querySelector('.tg[data-g="'+gid+'"][data-toggle="'+mode+'"]').parentNode;
+      box.querySelectorAll(".tg").forEach(function(b){ b.classList.remove("on"); });
+      btn.classList.add("on");
+      var d = findIndicador(gid);
+      var chart = host.querySelector('[data-chart="'+gid+'"]');
+      if(mode === "growth"){
+        var ser = d.series.map(function(p,i,arr){ return {x:p.x, v: i? ((p.v-arr[i-1].v)/(Math.abs(arr[i-1].v)||1)*100) : 0 }; }).slice(1);
+        chart.innerHTML = sparkline(ser, {bars:true});
+      } else {
+        chart.innerHTML = sparkline(d.series);
+      }
+    });
+  });
+}
+function findIndicador(gid){
+  for(var s=0;s<SECCIONES.length;s++){ for(var i=0;i<SECCIONES[s].ind.length;i++){ if((SECCIONES[s].id+"-"+i)===gid) return SECCIONES[s].ind[i]; } }
+  return null;
+}
+
+/* ══ búsqueda ══ */
+function setupSearch(){
+  var q = el("q");
+  q.addEventListener("input", function(){
+    var t = q.value.trim().toLowerCase();
+    document.querySelectorAll(".ind").forEach(function(card){
+      var hit = !t || card.getAttribute("data-name").indexOf(t) >= 0;
+      card.style.display = hit ? "" : "none";
+    });
+  });
+}
+
+/* ══ en vivo ══ */
+function stamp(){
+  var d = new Date();
+  el("stamp").textContent = "Actualizado: " + d.toLocaleString("es-DO",{hour12:false});
+  document.querySelectorAll("[data-ts]").forEach(function(s){ s.textContent = d.toLocaleTimeString("es-DO",{hour12:false}); });
+}
+function setKpi(id, value, meta){
+  if(el("v-"+id)) el("v-"+id).textContent = value;
+  if(meta && el("m-"+id)) el("m-"+id).textContent = meta;
+}
+function fetchLive(){
+  // FX: open.er-api.com (CORS)
+  fetch("https://open.er-api.com/v6/latest/USD").then(function(r){ return r.json(); }).then(function(j){
+    var r = j && j.rates && j.rates.DOP;
+    if(r) setKpi("fx", num(r,2), "DOP por US$1 · en vivo");
+  }).catch(function(){ setKpi("fx", "57.7", "DOP por US$1 · ref. 2023"); });
+
+  // World Bank (CORS)
+  function wb(code){ return "https://api.worldbank.org/v2/country/DOM/indicator/"+code+"?format=json&per_page=5&mrnev=1"; }
+  Promise.allSettled([
+    fetch(wb("SP.POP.TOTL")).then(function(r){ return r.json(); }),
+    fetch(wb("NY.GDP.MKTP.CD")).then(function(r){ return r.json(); }),
+    fetch(wb("FP.CPI.TOTL.ZG")).then(function(r){ return r.json(); })
+  ]).then(function(res){
+    function val(x){ try{ return x.value[1][0]; }catch(e){ return null; } }
+    var pop = val(res[0]), gdp = val(res[1]), inf = val(res[2]);
+    if(pop && pop.value) setKpi("pop", (pop.value/1e6).toFixed(1)+" M", "World Bank · "+pop.date);
+    else setKpi("pop", "10.7 M", "ONE · 2023");
+    if(gdp && gdp.value) setKpi("gdp", "US$ "+(gdp.value/1e9).toFixed(0)+" mil M", "World Bank · "+gdp.date);
+    else setKpi("gdp", "US$ 121 mil M", "BCRD · 2023");
+    if(inf && inf.value!=null) setKpi("inf", inf.value.toFixed(1)+"%", "World Bank · "+inf.date);
+    else setKpi("inf", "3.6%", "BCRD · dic 2023");
+  });
+  stamp();
+}
+
+/* ══ init ══ */
+renderChapters();
+setupSearch();
+drawTreemap(el("treemap"), TREEMAP);
+window.addEventListener("resize", function(){ drawTreemap(el("treemap"), TREEMAP); });
+fetchLive();
+setInterval(fetchLive, 300000); // cada 5 min
+</script>
+
+</body>
+</html>
