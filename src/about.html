@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acerca · Memorial Dominicanensis</title>
+<meta name="description" content="Memorial Dominicanensis — memorial de los medios para el adelantamiento de Santo Domingo. Acerca del proyecto.">
+<meta name="theme-color" content="#17181C">
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="css/tipografia.css">
+<style>
+:root{
+  --paper:#ffffff; --paper-2:#f4f5f8; --paper-3:#edeef3;
+  --ink:#17181c; --ink-2:#45484f; --ink-3:#63666f; --ink-muted:#9d9fa9;
+  --steel:#3a5fb5; --peri-tint:#f2f5fd;
+  --lime:#c9e96e; --lime-deep:#4d7c0f; --lime-soft:#def2a2;
+  --line:#e7e8ee; --line-2:#f0f1f5; --line-strong:#d9dbe3;
+  --canvas:#e6e7ee; --navy:#17181c; --radius:16px;
+  --sans:"et-book",Palatino,"Palatino Linotype","Palatino LT STD","Book Antiqua",Georgia,serif;
+  --mono:Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  --shadow-card:0 1px 2px rgba(23,24,28,.03),0 10px 26px -22px rgba(23,24,28,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);font-size:1rem;line-height:1.7;color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.6rem}
+::selection{background:var(--lime-soft);color:var(--ink)}
+
+.topbar{background:var(--paper);border-bottom:1px solid var(--line)}
+.topbar__in{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.brand__logo{width:32px;height:32px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.brand__text{display:flex;flex-direction:column;line-height:1.15}
+.brand__name{font-weight:400;font-size:1.1rem;letter-spacing:-.01em}
+.brand__sub{font-family:var(--mono);font-size:.56rem;letter-spacing:.24em;color:var(--lime-deep);font-weight:600}
+.topnav{display:flex;align-items:center;gap:1.4rem}
+.topnav a{font-size:.85rem;color:var(--ink-2);text-decoration:none}
+.topnav a:hover{color:var(--ink)}
+
+.about{padding:3rem 0 4rem}
+.about__head{max-width:820px;margin-bottom:1.6rem}
+.about__head h1{font-size:clamp(2.2rem,5vw,3.2rem);font-weight:400;letter-spacing:-.02em;line-height:1.1;margin-bottom:.5rem}
+.subtitle{font-size:1.3rem;font-style:italic;color:var(--ink-2);line-height:1.4}
+.nav{font-size:.95rem;color:var(--ink-3);margin-top:.8rem}
+.nav a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+.nav a:hover{border-color:var(--ink-2)}
+
+.prose{max-width:760px}
+.prose h2{font-size:2.2rem;font-style:italic;font-weight:400;letter-spacing:-.01em;line-height:1.15;margin:2.4rem 0 1rem}
+.prose h3{font-size:1.5rem;font-style:italic;font-weight:400;line-height:1.25;margin:1.8rem 0 .6rem}
+.prose p{font-size:1.05rem;line-height:1.8;color:var(--ink-2);margin-bottom:1rem}
+.prose p strong,.prose p b{color:var(--ink)}
+.prose ul,.prose ol{font-size:1.05rem;line-height:1.8;color:var(--ink-2);margin:0 0 1.2rem 1.4rem}
+.prose li{margin-bottom:.3rem}
+.prose a{color:var(--ink-2);border-bottom:1px solid var(--line-strong);text-decoration:none}
+.prose a:hover{border-color:var(--ink-2)}
+.epigraph{background:var(--peri-tint);border-left:3px solid var(--steel);border-radius:0 var(--radius) var(--radius) 0;padding:1.1rem 1.4rem;margin:1.5rem 0;color:var(--ink-2);font-style:italic}
+.lead{font-size:1.15rem;line-height:1.8;color:var(--ink-2);max-width:760px}
+
+.biblio{columns:2;column-gap:2.5rem;font-size:.9rem;line-height:1.6;color:var(--ink-3);list-style:none;margin:0;padding:0}
+.biblio li{break-inside:avoid;margin-bottom:.5rem;padding-left:1rem;position:relative}
+.biblio li::before{content:"·";position:absolute;left:0;color:var(--steel)}
+.notes{font-size:.95rem;line-height:1.7;color:var(--ink-2);margin-left:1.4rem}
+.notes li{margin-bottom:.5rem}
+
+footer{border-top:1px solid var(--line);background:var(--paper);margin-top:3rem}
+.foot__in{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;padding:1.6rem 0;align-items:start}
+.foot__in h2{font-size:1.2rem;font-style:italic;font-weight:400;margin-bottom:.5rem}
+.foot__in p,.foot__in li{font-size:.9rem;line-height:1.6;color:var(--ink-3)}
+.foot__in ul{list-style:none}
+.foot__in a{color:var(--ink-2);text-decoration:none}
+.foot__in a:hover{color:var(--ink)}
+
+@media (max-width:720px){
+  .biblio{columns:1}
+  .foot__in{grid-template-columns:1fr}
+  .topnav a:not(.is-cta){display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__in">
+    <a class="brand" href="index.html">
+      <img class="brand__logo" src="img/logo.webp" alt="">
+      <div class="brand__text">
+        <span class="brand__name">Memorial Dominicanensis</span>
+        <span class="brand__sub">ARBITRIOLOGIA</span>
+      </div>
+    </a>
+    <nav class="topnav">
+      <a href="index.html">Inicio</a>
+      <a href="projects/arreglo-institucional/index.html">Arreglo Institucional</a>
+      <a class="is-cta" href="spec/design.md">Diseño</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <article class="about">
+    <header class="about__head">
+      <h1>Acerca del proyecto</h1>
+      <p class="subtitle">Memorial de los medios para el adelantamiento de Santo Domingo</p>
+      <p class="nav">
+        <a href="index.html">Inicio</a> ·
+        <a href="projects/arreglo-institucional/index.html">Arreglo Institucional</a> ·
+        <a href="spec/design.md">Diseño</a>
+      </p>
+    </header>
+
+    <div class="prose">
+      <div class="epigraph">
+        <b>Memorial Dominicanensis</b> es un memorial de los medios para el adelantamiento de Santo Domingo: el
+        repertorio razonado de los arbitrios, sociedades y técnicas con que una isla se propone adelantar.
+
+        <p></p>
+
+        No es una crónica del pasado ni un plan cerrado, sino una <b>memoria instrumental</b> — un archivo de medios
+        consultable para volver a pensar el adelantamiento del país. <b>¡Plus Ultra</b>; Dominicanos!
+      </div>
+
+      <h2>Breviarium</h2>
+      <p>
+        Nuestra honorable misión es <b>redefinir/mejorar</b> los cimientos de nuestra patria: la gestión pública, el
+        sistema financiero, la investigación y desarrollo, los ecosistemas productivos, las exportaciones, el capital
+        humano, la infraestructura, el marco legal y las inversiones extranjeras estratégicas; todo en aras de la
+        <b>riqueza, la belleza y la grandeza</b>.
+      </p>
+
+      <h2>Locus Problematis</h2>
+      <div class="epigraph">
+        [Locus] de problemas a abordar con honor y honra. Con la nobleza de espíritu y el discernimiento que nos
+        legaron los sabios antiguos, nos disponemos a enfrentar estos desafíos con valentía y sabiduría, buscando
+        soluciones que no solo beneficien a nuestra patria, sino que también eleven el bienestar de todos sus
+        ciudadanos.
+      </div>
+
+      <h3><b>Producción</b>: Diversa, Eficiente, Profunda y Robusta</h3>
+      <p>
+        En nuestra <b>memoria</b> estaremos abordando cuatro clases de problemas: el primero es <b>caracterizar</b> el
+        aparato productivo de la economia nacional; el segundo es <b>caracterizar</b> el aparato productivo de la
+        economía global; el tercero es <b>diseñar</b> un conjunto de estrategias, planes y mecanismos para converger
+        con este; el cuarto es <b>monitorear</b> las fronteras tecnológicas-cientificas en pos de diseñar las
+        estrategias de conquistas de esta; ¡Plus Ultra!
+      </p>
+
+      <h3><b>Inversiones Extranjeras Estratégicas</b>: Útiles y Oportundas</h3>
+      <p>
+        Las inversiones extranjeras representan mecanismos cruciales para financiar las actividades económicas de un
+        país; no obstante, para ser verdaderamente beneficiosas, deben dirigirse hacia la diversificación del aparato
+        productivo y el aumento de la productividad en las empresas existentes. Por ello, propongo la creación de un
+        conjunto de políticas e incentivos destinados a atraer inversiones capaces de cumplir con estos objetivos.
+      </p>
+
+      <h3><b>Comercio Exterior</b>: Útil y Robusto</h3>
+      <p>
+        El papel del <b>"Comercio Exterior"</b> en nuestra nación es crucial, dada la limitación del mercado local.
+        Sin embargo, hasta ahora, no hemos logrado aprovecharlo plenamente, ya que nuestras exportaciones son bastante
+        básicas. Por tanto, propongo diseñar un conjunto de políticas e incentivos que no solo eleven el valor
+        agregado de nuestras exportaciones, sino que también nos abran las puertas a nuevos mercados.
+      </p>
+
+      <h3><b>I+d+i</b>: Adaptativo, Vinculado, Eficiente, Proactivo y Autonomo</h3>
+      <p>
+        Los desafíos que nos presenta la <b>economía nacional</b> nos convocan a la honrada, honorable e imperiosa
+        faena de diseñar, coordinar y monitorear el <b>Sistema Nacional de I+D+I</b>. Este sistema tendrá por
+        gloriosa función de <b>profundizar en nuestro dominio tecnológico</b> sobre los ecosistemas productivos
+        actuales; <b>adquirir las capacidades necesarias</b> para forjar nuevos ecosistemas productivos y
+        <b>explorar las fronteras de la ciencia y la tecnología</b> con el fin de liderar nuevos ecosistemas
+        productivos.
+      </p>
+
+      <h3>Finanzas: Adaptativo, Vinculado, Eficiente, Proactivo y Autonomo</h3>
+      <p>
+        Las necesidades de nuestra economía real nos convocan a diseñar un mercado financiero que riegue y potencie un
+        subconjunto de los sistemas productivos nacionales presentes y viables, permitiendo establecer las semillas
+        para los nuevos. Todo esto, bajo el manto de las buenas prácticas financieras, que garanticen eficiencia,
+        robustez, confianza y sostenibilidad.
+      </p>
+
+      <h3>Capital Humano: Adaptativo, Vinculado, Eficiente, Proactivo y Autonomo</h3>
+      <p>
+        Las exigencias de nuestra economía palpable nos llaman a concebir un "Sistema de Formación Humana" capaz de
+        formar individuos capaces de afrontar los desafíos de la nación, para esto es clave centrarse en el desarrollo
+        de habilidades y capacidades avanzadas de modelado.
+      </p>
+
+      <h3>Infraestructura: Oportuna, Competitiva, Vinculado</h3>
+      <p>
+        La infraestructura constituye los medios físicos y virtuales sobre los cuales los agentes de una sociedad
+        desempeñan sus funciones. Resulta conveniente adoptar un enfoque sistemático en el desarrollo de la
+        infraestructura, considerando las necesidades de los distintos sectores de la sociedad, y establecer
+        mecanismos de evaluación para medir su impacto.
+      </p>
+
+      <h3>Res Publica: Adaptavio, Eficiente, Honrado, Inteligente, Participativo</h3>
+      <p>
+        Las necesidades de belleza y riqueza (grandeza) que la honorable, honrada y magnánima sociedad dominicana
+        exige y merece, nos congregan en la ardua y gloriosa tarea de mejorar la capa más fundamental de la patria: el
+        estado (la res publica). En esta gesta, nos proponemos abordar problemas dentro del marco del Módelo de
+        Sistema Viable (MSV). Esto implica:
+      </p>
+      <ol>
+        <li><b>Nivel 1 - Operaciones</b>: Diseño y re-organización de las instituciones en aras de mejorar la
+            operativad, eficacia respondiedo a las estrategias y políticas establecidas,</li>
+        <li><b>Nivel 2 - Coordinación</b>: Proveer coordinación y manejo de conflictos, así como fomentar
+            interacciones y sinergias entre instituciones, empresas, academia y otros actores sociales,</li>
+        <li><b>Nivel 3 - Control</b>: Implementación de mecanismos supervisión y auditoria para garantizar que los
+            recursos se utilicen de manera óptima y que las operaciones se alineen con las políticas y estrategias
+            establecidas,</li>
+        <li><b>Nivel 4 - Inteligencia</b>: Estudio y evaluación continua de las instituciones y políticas públicas,
+            explorando el entorno y adaptándose a los cambios para asegurar la sostenibilidad a largo plazo,</li>
+        <li><b>Nivel 5 - Política (Estrategia)</b>: Definición de valores y metas a largo plazo, asegurando que todas
+            las acciones y decisiones se orienten hacia la belleza, riqueza (grandeza) de la patria.</li>
+      </ol>
+      <p>
+        A través de este enfoque integral del VSM, buscamos no solo la eficiencia y la robustez, sino también la
+        confianza y la sostenibilidad en la gestión de la cosa pública, asegurando así un futuro próspero para todos.
+      </p>
+
+      <h2>Locus Instrumenta</h2>
+      <div class="epigraph">
+        [Locus] de instrumentos que nos permitirán afrontar los grandes desafíos económicos de nuestra patria, con el
+        denuedo y la sabiduría que nuestros predecesores legaron, forjando un porvenir próspero y lleno de esperanzas.
+        En este empeño, cual Quijotes modernos, nos armamos de valor y conocimiento para enfrentarnos a los gigantes de
+        la adversidad económica, buscando no solo sobrevivir, sino prosperar y elevar nuestra nación a nuevas alturas
+        de gloria y bienestar.
+      </div>
+      <p>
+        Nuestras capacidades para enfrentar problemas abarcan todo el espectro desde la <em>identificación, análisis,
+        caracterización, diseño inicial</em> hasta la <em>implementación, auditoría y monitoreo</em> de políticas e
+        instituciones.
+      </p>
+      <p>En nuestra arca de herramientas, atesoramos:</p>
+      <ul>
+        <li>Sistémica,</li>
+        <li>Sistemas Complejos,</li>
+        <li>Modelos Computacionales,</li>
+        <li>Modelos Estadísticos,</li>
+        <li>Modelos de Aprendizaje Automático,</li>
+        <li>Cibernética,</li>
+        <li>Modelos de la Economía Heterodoxa: Complejidad, Evolutiva, Diseño de Mecanismos,</li>
+        <li>Modelos de Sistemas Sociales: Confianza, Agente Principal, Acción Colectiva, etc.</li>
+      </ul>
+
+      <h2>Notas al pie</h2>
+      <ol class="notes">
+        <li><b>Profundo</b>: Cadenas de valor largas (Deep Tech).</li>
+        <li><b>Robusto</b>: Redundancia local e internacional (compradores y vendedores).</li>
+        <li><b>Vinculado</b>: Responde a las necesidades del aparato productivo actual.</li>
+        <li><b>Proactivo</b>: Desarrolla capacidades para la siguiente fase de transformación del aparato productivo.</li>
+        <li><b>Adaptativo</b>: Los mecanismos de I+D+I deben adaptarse a las capacidades y necesidades del tejido
+            empresarial.</li>
+        <li><b>El Modelo de Sistema Viable (Viable System Model - VSM)</b>: es una teoría desarrollada por Stafford
+            Beer para entender y organizar sistemas complejos de manera que sean viables y sostenibles.</li>
+        <li><b>Refactorización institucional</b> para asegurar una adecuada cohesión y eficacia en sus funciones.</li>
+      </ol>
+
+      <h2>Bibliografía</h2>
+      <ul class="biblio">
+        <li>Fundar. (2020, noviembre 30). Fundar. https://fund.ar/</li>
+        <li>The Growth Lab. (s/f). Harvard.edu. https://growthlab.hks.harvard.edu/</li>
+        <li>Defoe, Daniel. A Plan of the English Commerce. J. &amp; J. Rivington, 1749.</li>
+        <li>De Montchrestien, Antoine. Traicté de l'oeconomie politique. Vol. 16. Librairie Droz, 1999.</li>
+        <li>Laffemas, Barthélemy de. "Mémoires sur le commerce." (No Title).</li>
+        <li>de Uztáriz, Jerónimo. Theorica y practica de comercio y de marina… 1742.</li>
+        <li>Botero, Giovanni, et al. On the Causes of the Greatness and Magnificence of Cities, 1588. Univ. of Toronto Press, 2012.</li>
+        <li>Heckscher, Eli F. Mercantilism. Routledge, 2013.</li>
+        <li>Serra, Antonio. A short treatise on the wealth and poverty of nations (1613). Anthem Press, 2011.</li>
+        <li>Wen, Yi. Making of An Economic Superpower, The. World Scientific, 2016.</li>
+        <li>Johnson, Chalmers. MITI and the Japanese miracle. Stanford university press, 1982.</li>
+        <li>Reinert, Erik. "How rich nations got rich: Essays in the history of economic policy." (2004).</li>
+        <li>Von Hörnigk, Philip Wilhelm. "Austria over all if she only will." Early Economic Thought (1965).</li>
+        <li>Hidalgo, Cesar. Why information grows. Basic Books, 2015.</li>
+        <li>Lee, Keun. The art of economic catch-up. Cambridge University Press, 2019.</li>
+        <li>Nelson, Richard R., ed. National innovation systems: a comparative analysis. Oxford University Press, 1993.</li>
+        <li>de Witt, Johan. The True Interest and Political Maxims, of the Republic of Holland. J. Nourse, 1746.</li>
+        <li>Schuurman, Paul. "The Cat's Grand Strategy: Pieter de la Court (1618–1685)…" History of European Ideas 41.3 (2015): 338-356.</li>
+        <li>Abramovitz, Moses. "Catching up, forging ahead, and falling behind." The Journal of Economic History 46.2 (1986): 385-406.</li>
+        <li>Ohno, Kenichi. Learning to industrialize. 2013.</li>
+        <li>Bonvillian, William Boone, et al. The DARPA model for transformative technologies. Open Book Publishers, 2019.</li>
+        <li>Lee, K., &amp; Malerba, F. (2018). Economic catch-up by latecomers as an evolutionary process. 172–207.</li>
+        <li>Nelson, R. R. (1985). An evolutionary theory of economic change. Harvard university press.</li>
+        <li>Kim, Byung-Kook, and Ezra F. Vogel, eds. The Park Chung Hee Era. Harvard University Press, 2011.</li>
+        <li>Caraballo, J. G., &amp; Jiang, X. (2016). Value-Added Erosion in Global Value Chains. 50(1), 288–296.</li>
+        <li>Hausmann, R., et al. (2006). What You Export Matters.</li>
+        <li>Hidalgo, C. A., et al. (2007). The product space conditions the development of nations. 317(5837), 482–487.</li>
+        <li>Hausmann, R., Hidalgo, C. A. (2011). The network structure of economic output. J Econ Growth, 16, 309–342.</li>
+        <li>Wade, Robert. "Governing the market." (2018): 1-496.</li>
+        <li>Unger, Roberto Mangabeira. The knowledge economy. Verso Books, 2022.</li>
+        <li>Berlinski, David J. "Systems analysis." Urban Affairs Quarterly 6.1 (1970): 104-126.</li>
+        <li>Porter, Michael E. Competitive advantage of nations. Simon and Schuster, 2011.</li>
+        <li>Hanafi, Muhammad, et al. "Modelling competitive advantage of nation." Competitiveness Review 27.4 (2017): 335-365.</li>
+        <li>Bessen, James. Learning by doing. Yale University Press, 2015.</li>
+        <li>Klenow, Peter J. "Learning curves and the cyclical behavior of manufacturing industries." Review of Economic Dynamics 1.2 (1998): 531-550.</li>
+        <li>Argote, L., &amp; Epple, D. (1990). Learning curves in manufacturing. 247(4945), 920–924.</li>
+        <li>Gao, J., et al. (2017). Collective Learning in China's Regional Economic Development.</li>
+        <li>Zheng, S., et al. (2017). The birth of edge cities in China. Journal of Urban Economics, 100, 80–103.</li>
+        <li>Schelling, Thomas C. Micromotives and macrobehavior. WW Norton &amp; Company, 2006.</li>
+        <li>Metropolis, Nicholas, and Gian-Carlo Rota, eds. A new era in computation. Mit Press, 1993.</li>
+        <li>Rostow, Walt Whitman. "The stages of economic growth." The Economic History Review 12.1 (1959): 1-16.</li>
+        <li>Nelson, Richard R. The sources of economic growth. Harvard University Press, 2000.</li>
+        <li>Nelson, Richard R. Technology, institutions, and economic growth. Harvard University Press, 2005.</li>
+        <li>Soete, Luc, and Chris Freeman. The economics of industrial innovation. Routledge, 2012.</li>
+        <li>Dosi, Giovanni. Technical change and industrial transformation. Springer, 1984.</li>
+      </ul>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <div class="wrap foot__in">
+    <div>
+      <h2>Navegación</h2>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="projects/arreglo-institucional/index.html">Arreglo Institucional</a></li>
+        <li><a href="research/README.md">Investigación</a></li>
+        <li><a href="projects/README.md">Proyectos</a></li>
+        <li><a href="../README.md">Documentación</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Contactos</h2>
+      <p>
+        Memorial Dominicanensis<br />
+        Santo Domingo, República Dominicana<br />
+        Correo: <a href="mailto:rd.bremont@gmail.com">rd.bremont@gmail.com</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
