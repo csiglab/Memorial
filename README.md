@@ -1,3 +1,7 @@
+# Memorial Dominicanensis
+
+> The project needs to be re-organize but the notes are here -- `./src/projects/arreglo-institucional/docs/Consejo Tecnocientifico`.
+
 - https://github.com/csiglab/research-rd20
 - https://github.com/csiglab/research-rd10
 - https://github.com/csiglab/viz-country-institutional-evolution
