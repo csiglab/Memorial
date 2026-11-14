@@ -1,5 +1,9 @@
 # Memorial Dominicanensis
 
+> En Realidad Republica Dominicana En Datos Es útil.  (Serie de Informes y Carpetas Informes).
+> Con Aclarandos de Interpertation.
+> 
+
 > The project needs to be re-organize but the notes are here -- `./src/projects/arreglo-institucional/docs/Consejo Tecnocientifico`.
 
 - https://github.com/csiglab/research-rd20
