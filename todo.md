@@ -1,0 +1,11 @@
+- Dominican Firm Competitiveness Aid Agency Network (Meta Empresa)
+    - https://www.sgpc.sg/ducti
+    - This should be a set of public and even private agencies (Export Promotion Should be Private).
+        - The state can not have under his trade mark - a very ‘intensive’ internationalization organization under it - but it can be weakly assoicated (from the outside point of view)
+            - Such organization - can negotiate contracts, find buyers,  conduct market research, …
+    - Tech Observatory
+    - Cluster Interaction
+    - Aid to Improve R&D Capacity
+    - Interaction Mechanism with Other Relevant State Actors.
+    - Production (Operation Efficiency Improvement Service Set)
+    - Productivity + cost, quality, innovation, differentiation, market access, adaptability, etc.
